@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pranav Shivam — Forward Deployed Engineer, AI/ML Systems</title>
+<meta name="description" content="Pranav Shivam — Forward Deployed Engineer building production AI systems at Cognida.AI. RFQ automation, estimation platforms, and enterprise automation pipelines.">
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF;
+    --paper-alt:#E4E9E6;
+    --surface:#FFFFFF;
+    --ink:#12191A;
+    --ink-soft:#3C4B4A;
+    --panel:#0E1614;
+    --panel-line:#26332F;
+    --teal:#1E7A6C;
+    --teal-soft:#BFDDD6;
+    --gold:#B9852E;
+    --gold-soft:#EBD9B4;
+    --line:#C9D2CD;
+    --status-done-bg:#E4E4E4;
+    --status-done-fg:#444444;
+    --nav-bg:rgba(238,241,239,0.88);
+    --selection:#EBD9B4;
+    /* Fixed — the hero/footer panel is always dark by design, in both themes,
+       so text placed on it must stay light regardless of --paper/--teal-soft
+       (which flip meaning between themes). Do not override these below. */
+    --panel-fg:#EEF1EF;
+    --panel-fg-soft:#C7D2CE;
+    --panel-accent:#BFDDD6;
+    --radius:14px;
+    --disp:'Space Grotesk', sans-serif;
+    --body:'IBM Plex Sans', sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+    --maxw:1120px;
+    color-scheme:light;
+  }
+
+  html[data-theme="dark"]{
+    --paper:#121917;
+    --paper-alt:#1A2320;
+    --surface:#161F1C;
+    --ink:#E7ECE9;
+    --ink-soft:#9FB3AC;
+    --panel:#070B0A;
+    --panel-line:#1E2A26;
+    --teal:#3CB49B;
+    --teal-soft:#163B33;
+    --gold:#DFAA5C;
+    --gold-soft:#3B2C15;
+    --line:#263029;
+    --status-done-bg:#222B27;
+    --status-done-fg:#9FB3AC;
+    --nav-bg:rgba(18,25,23,0.86);
+    --selection:#3B2C15;
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--body);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    transition:background-color .35s ease, color .35s ease;
+  }
+  a{color:inherit;}
+  ::selection{background:var(--selection);}
+
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px;}
+
+  /* ---------- NAV ---------- */
+  nav.topnav{
+    position:sticky; top:0; z-index:50;
+    background:var(--nav-bg);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .topnav-inner{
+    max-width:var(--maxw); margin:0 auto; padding:14px 28px;
+    display:flex; align-items:center; justify-content:space-between;
+    position:relative;
+  }
+  .brand{
+    font-family:var(--disp); font-weight:700; font-size:17px;
+    letter-spacing:0.01em; text-decoration:none; display:flex; gap:10px; align-items:center;
+  }
+  .brand .mark{
+    width:26px; height:26px; border-radius:6px; background:var(--ink);
+    color:var(--paper); display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-size:12px; font-weight:500;
+    transition:background-color .35s ease, color .35s ease;
+  }
+  .nav-right{display:flex; align-items:center; gap:18px;}
+  .navlinks{display:flex; gap:28px; list-style:none; margin:0; padding:0;}
+  .navlinks a{
+    font-family:var(--mono); font-size:12.5px; text-transform:uppercase; letter-spacing:0.06em;
+    text-decoration:none; color:var(--ink-soft); transition:color .15s ease;
+    border-bottom:1px solid transparent; padding-bottom:2px;
+  }
+  .navlinks a:hover, .navlinks a:focus-visible{color:var(--teal); border-color:var(--teal);}
+
+  /* Theme toggle */
+  .theme-toggle{
+    position:relative; width:38px; height:38px; border-radius:50%;
+    background:var(--surface); border:1px solid var(--line); color:var(--ink);
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:border-color .15s ease, transform .15s ease, background-color .35s ease;
+    flex:none;
+  }
+  .theme-toggle:hover{border-color:var(--teal); transform:translateY(-1px);}
+  .theme-toggle svg{width:17px; height:17px; position:absolute; transition:opacity .25s ease, transform .35s ease;}
+  .theme-toggle .icon-sun{opacity:1; transform:rotate(0deg) scale(1);}
+  .theme-toggle .icon-moon{opacity:0; transform:rotate(-40deg) scale(0.6);}
+  html[data-theme="dark"] .theme-toggle .icon-sun{opacity:0; transform:rotate(40deg) scale(0.6);}
+  html[data-theme="dark"] .theme-toggle .icon-moon{opacity:1; transform:rotate(0deg) scale(1);}
+
+  /* Mobile burger */
+  .nav-burger{
+    display:none; width:36px; height:36px; border-radius:8px;
+    background:transparent; border:1px solid var(--line); cursor:pointer;
+    flex-direction:column; align-items:center; justify-content:center; gap:4px; flex:none;
+  }
+  .nav-burger span{width:16px; height:1.5px; background:var(--ink); transition:transform .2s ease, opacity .2s ease;}
+  .nav-burger[aria-expanded="true"] span:nth-child(1){transform:translateY(5.5px) rotate(45deg);}
+  .nav-burger[aria-expanded="true"] span:nth-child(2){opacity:0;}
+  .nav-burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-5.5px) rotate(-45deg);}
+
+  @media(max-width:760px){
+    .navlinks{
+      display:flex; flex-direction:column; gap:2px;
+      position:absolute; top:100%; left:0; right:0;
+      background:var(--paper); border-bottom:1px solid var(--line);
+      padding:8px 28px 18px; max-height:0; overflow:hidden;
+      transition:max-height .25s ease;
+    }
+    .navlinks.open{max-height:340px; padding:14px 28px 20px;}
+    .navlinks a{padding:10px 0; border-bottom:1px solid var(--line);}
+    .navlinks li:last-child a{border-bottom:none;}
+    .nav-burger{display:flex;}
+  }
+
+  /* ---------- HERO ---------- */
+  header.hero{
+    background:var(--panel); color:var(--panel-fg);
+    position:relative; overflow:hidden;
+    border-bottom:1px solid var(--panel-line);
+  }
+  .hero-inner{
+    max-width:var(--maxw); margin:0 auto; padding:88px 28px 64px;
+    display:grid; grid-template-columns:1.1fr 0.9fr; gap:48px; align-items:center;
+  }
+  @media(max-width:860px){ .hero-inner{grid-template-columns:1fr; padding:56px 24px 40px;} }
+
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--panel-accent); display:flex; align-items:center; gap:10px; margin-bottom:22px;
+  }
+  .eyebrow .dot{
+    width:7px; height:7px; border-radius:50%; background:var(--gold);
+    box-shadow:0 0 0 4px rgba(185,133,46,0.18);
+  }
+  h1.name{
+    font-family:var(--disp); font-weight:700;
+    font-size:clamp(34px, 5.4vw, 56px); line-height:1.03; margin:0 0 14px; letter-spacing:-0.01em;
+    color:var(--panel-fg);
+  }
+  .role{
+    font-family:var(--body); font-weight:500; font-size:clamp(16px,2vw,19px);
+    color:var(--panel-accent); margin:0 0 20px;
+  }
+  .tagline{
+    font-size:16px; color:var(--panel-fg-soft); max-width:46ch; margin:0 0 32px; line-height:1.65;
+  }
+  .hero-ctas{display:flex; gap:14px; flex-wrap:wrap;}
+  .btn{
+    font-family:var(--mono); font-size:13px; text-transform:uppercase; letter-spacing:0.05em;
+    padding:13px 22px; border-radius:8px; text-decoration:none; display:inline-flex; align-items:center; gap:8px;
+    transition:transform .15s ease, background .15s ease, border-color .15s ease;
+  }
+  .btn-primary{background:var(--gold); color:#1B140A; border:1px solid var(--gold);}
+  .btn-primary:hover{transform:translateY(-2px); background:#CC963B;}
+  .btn-ghost{border:1px solid var(--panel-line); color:var(--panel-fg);}
+  .btn-ghost:hover{border-color:var(--panel-accent); transform:translateY(-2px);}
+
+  /* pipeline signature svg */
+  .pipeline-wrap{position:relative;}
+  .pipeline-wrap svg{width:100%; height:auto; display:block;}
+  .pl-label{
+    font-family:var(--mono); font-size:9.5px; fill:#8AA39D; letter-spacing:0.06em;
+  }
+  .pl-node-label{font-family:var(--mono); font-size:10px; fill:#D8E4E1;}
+  @media(prefers-reduced-motion:no-preference){
+    .flow-dot{ animation: none; }
+  }
+
+  /* ---------- SECTION SHELL / PIPELINE RAIL ---------- */
+  section{padding:88px 0; position:relative;}
+  section + section{border-top:1px solid var(--line);}
+  .stage-row{
+    display:grid; grid-template-columns:64px 1fr; gap:0;
+  }
+  @media(max-width:700px){ .stage-row{grid-template-columns:36px 1fr;} }
+  .stage-rail{position:relative;}
+  .stage-rail::before{
+    content:''; position:absolute; left:50%; top:0; bottom:-88px; width:1px;
+    background:repeating-linear-gradient(to bottom, var(--line) 0 6px, transparent 6px 12px);
+    transform:translateX(-50%);
+  }
+  section:last-of-type .stage-rail::before{display:none;}
+  .stage-node{
+    position:relative; width:14px; height:14px; border-radius:50%;
+    background:var(--paper); border:2px solid var(--teal); margin:6px auto 0;
+    z-index:2; transition:background-color .35s ease;
+  }
+  .stage-content{padding-left:20px;}
+  .stage-tag{
+    font-family:var(--mono); font-size:12px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--teal); margin:0 0 8px; display:block;
+  }
+  h2.stage-title{
+    font-family:var(--disp); font-weight:600; font-size:clamp(24px,3.4vw,34px);
+    margin:0 0 14px; letter-spacing:-0.01em;
+  }
+  .stage-sub{color:var(--ink-soft); max-width:62ch; margin:0 0 40px; font-size:15.5px;}
+
+  /* ---------- NOW STRIP ---------- */
+  .now-strip{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+    background:var(--line); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;
+  }
+  @media(max-width:700px){ .now-strip{grid-template-columns:1fr;} }
+  .now-cell{background:var(--paper); padding:22px 24px; transition:background-color .35s ease;}
+  .now-k{font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-soft); margin-bottom:8px;}
+  .now-v{font-size:15px; font-weight:500;}
+
+  /* ---------- SYSTEMS / PROJECT CARDS ---------- */
+  .cards{display:grid; grid-template-columns:repeat(2,1fr); gap:20px;}
+  @media(max-width:760px){ .cards{grid-template-columns:1fr;} }
+  .card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:26px 26px 24px; display:flex; flex-direction:column; gap:14px;
+    transition:border-color .15s ease, transform .15s ease, background-color .35s ease;
+  }
+  .card:hover{border-color:var(--teal); transform:translateY(-3px);}
+  .card-top{display:flex; justify-content:space-between; align-items:flex-start; gap:12px;}
+  .card-title{font-family:var(--disp); font-weight:600; font-size:19px; margin:0;}
+  .status-pill{
+    font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:0.05em;
+    padding:4px 9px; border-radius:20px; white-space:nowrap;
+  }
+  .status-live{background:var(--teal-soft); color:var(--teal);}
+  html[data-theme="dark"] .status-live{color:#8FE3CE;}
+  .status-uat{background:var(--gold-soft); color:var(--gold);}
+  .status-done{background:var(--status-done-bg); color:var(--status-done-fg);}
+  .card-desc{font-size:14.5px; color:var(--ink-soft); margin:0;}
+  .card-metrics{display:flex; flex-wrap:wrap; gap:8px; margin-top:auto; padding-top:6px;}
+  .metric-chip{
+    font-family:var(--mono); font-size:11.5px; background:var(--paper-alt);
+    border:1px solid var(--line); border-radius:6px; padding:5px 9px; color:var(--ink);
+  }
+  .metric-chip b{color:var(--teal);}
+
+  /* ---------- LAB (PERSONAL PROJECTS) ---------- */
+  .card-link{
+    font-family:var(--mono); font-size:11.5px; color:var(--teal); text-decoration:none;
+    display:inline-flex; align-items:center; gap:4px; margin-top:auto;
+  }
+  .card-link:hover{text-decoration:underline;}
+  .lab-more-title{
+    font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:0.08em;
+    color:var(--ink-soft); margin:36px 0 14px;
+  }
+  .lab-more{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
+  @media(max-width:760px){ .lab-more{grid-template-columns:1fr 1fr;} }
+  @media(max-width:520px){ .lab-more{grid-template-columns:1fr;} }
+  .lab-item{
+    background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px 18px;
+    display:flex; flex-direction:column; gap:6px; transition:border-color .15s ease, background-color .35s ease;
+  }
+  .lab-item:hover{border-color:var(--teal);}
+  .lab-item-top{display:flex; justify-content:space-between; align-items:center; gap:8px;}
+  .lab-item-title{font-weight:600; font-size:14px;}
+  .lab-item-desc{font-size:12.5px; color:var(--ink-soft); line-height:1.55; margin:0;}
+  .lab-live{font-family:var(--mono); font-size:9.5px; color:var(--gold); text-transform:uppercase; letter-spacing:0.05em; white-space:nowrap;}
+
+  /* ---------- IMPACT LEDGER ---------- */
+  .ledger{
+    border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:var(--surface);
+    transition:background-color .35s ease;
+  }
+  .ledger-row{
+    display:grid; grid-template-columns:140px 1fr; gap:20px; padding:18px 24px;
+    align-items:center; border-bottom:1px solid var(--line);
+  }
+  .ledger-row:last-child{border-bottom:none;}
+  @media(max-width:600px){ .ledger-row{grid-template-columns:1fr; gap:6px;} }
+  .ledger-val{
+    font-family:var(--mono); font-weight:500; font-size:20px; color:var(--teal);
+    line-height:1.25; overflow-wrap:break-word; min-width:0;
+  }
+  .ledger-desc{font-size:14.5px; color:var(--ink-soft);}
+  .ledger-desc strong{color:var(--ink); font-weight:600;}
+
+  /* ---------- STACK ---------- */
+  .stack-groups{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
+  @media(max-width:760px){ .stack-groups{grid-template-columns:1fr 1fr;} }
+  @media(max-width:520px){ .stack-groups{grid-template-columns:1fr;} }
+  .stack-group-title{
+    font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:0.08em;
+    color:var(--ink-soft); margin-bottom:12px;
+  }
+  .chip-list{display:flex; flex-wrap:wrap; gap:8px;}
+  .tech-chip{
+    font-size:13.5px; padding:6px 12px; border-radius:20px; background:var(--surface);
+    border:1px solid var(--line); transition:background-color .35s ease;
+  }
+
+  /* ---------- JOURNEY TIMELINE ---------- */
+  .tl{display:flex; flex-direction:column; gap:0;}
+  .tl-item{
+    display:grid; grid-template-columns:150px 1fr; gap:20px; padding:20px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .tl-item:last-child{border-bottom:none;}
+  @media(max-width:600px){ .tl-item{grid-template-columns:1fr; gap:4px;} }
+  .tl-date{font-family:var(--mono); font-size:12.5px; color:var(--ink-soft); padding-top:2px;}
+  .tl-role{font-weight:600; font-size:15.5px; margin-bottom:4px;}
+  .tl-desc{font-size:14.5px; color:var(--ink-soft);}
+
+  .write-link{
+    font-family:var(--mono); font-size:11.5px; color:var(--teal); text-decoration:none;
+    display:inline-flex; align-items:center; gap:4px; margin-top:8px;
+  }
+  .write-link:hover{text-decoration:underline;}
+
+  /* ---------- GROWTH ---------- */
+  .growth-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  @media(max-width:760px){ .growth-grid{grid-template-columns:1fr;} }
+  .goal-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:24px;
+    transition:background-color .35s ease;
+  }
+  .goal-tag{font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold); margin-bottom:10px; display:block;}
+  .goal-card p{font-size:14.5px; color:var(--ink-soft); margin:0;}
+  .cert-note{margin-top:24px; font-size:13.5px; color:var(--ink-soft); font-family:var(--mono);}
+
+  /* ---------- CONTACT / FOOTER ---------- */
+  footer{
+    background:var(--panel); color:var(--panel-fg); padding:72px 0 40px; border-top:1px solid var(--panel-line);
+  }
+  .footer-inner{max-width:var(--maxw); margin:0 auto; padding:0 28px;}
+  .footer-cta h2{
+    font-family:var(--disp); font-weight:700; font-size:clamp(28px,4vw,42px); margin:0 0 16px; letter-spacing:-0.01em;
+    color:var(--panel-fg);
+  }
+  .footer-cta p{color:var(--panel-fg-soft); max-width:52ch; margin:0 0 30px;}
+  .contact-grid{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:56px;}
+  .footer-bottom{
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    border-top:1px solid var(--panel-line); padding-top:24px;
+    font-family:var(--mono); font-size:12px; color:#7C8D88;
+  }
+
+  /* reveal on scroll */
+  .reveal{opacity:0; transform:translateY(14px); transition:opacity .6s ease, transform .6s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+  @media(prefers-reduced-motion:reduce){
+    .reveal{opacity:1; transform:none; transition:none;}
+    html{scroll-behavior:auto;}
+    body, .card, .lab-item, .ledger, .goal-card, .tech-chip, .now-cell, .theme-toggle svg{transition:none;}
+  }
+
+  a:focus-visible, button:focus-visible{outline:2px solid var(--teal); outline-offset:2px;}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a href="#top" class="brand"><span class="mark">PS</span> Pranav Shivam</a>
+    <div class="nav-right">
+      <ul class="navlinks" id="navlinks">
+        <li><a href="#systems">Systems</a></li>
+        <li><a href="#lab">Lab</a></li>
+        <li><a href="#impact">Impact</a></li>
+        <li><a href="#stack">Stack</a></li>
+        <li><a href="#journey">Journey</a></li>
+        <li><a href="#growth">Growth</a></li>
+        <li><a href="#writing">Writing</a></li>
+        <li><a href="#connect">Connect</a></li>
+      </ul>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false" aria-label="Switch to dark mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+      </button>
+      <button class="nav-burger" id="navBurger" type="button" aria-expanded="false" aria-label="Open menu" aria-controls="navlinks">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="hero-inner">
+    <div>
+      <p class="eyebrow"><span class="dot"></span>Currently building for an enterprise client · Cognida.AI</p>
+      <h1 class="name">Pranav Shivam</h1>
+      <p class="role">Forward Deployed Engineer — AI/ML Systems</p>
+      <p class="tagline">I sit between the client's whiteboard and production. Outside client work, I run an independent lab — RAG pipelines, multi-agent systems, self-hosted tools — to test ideas before they show up in production.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#systems">View systems built →</a>
+        <a class="btn btn-ghost" href="#connect">Get in touch</a>
+      </div>
+    </div>
+    <div class="pipeline-wrap">
+      <svg viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagram of a five-stage build pipeline: ingest, design, build, validate, ship">
+        <path id="flowpath" d="M40,40 C120,40 90,120 170,120 C250,120 220,200 300,200 C340,200 340,240 380,260"
+              fill="none" stroke="#26332F" stroke-width="2"/>
+        <circle class="flow-dot" r="4" fill="#B9852E">
+          <animateMotion dur="6s" repeatCount="indefinite" rotate="auto">
+            <mpath href="#flowpath"/>
+          </animateMotion>
+        </circle>
+
+        <g>
+          <circle cx="40" cy="40" r="7" fill="#0E1614" stroke="#1E7A6C" stroke-width="2"/>
+          <text x="40" y="20" text-anchor="middle" class="pl-node-label">INGEST</text>
+          <text x="40" y="64" text-anchor="middle" class="pl-label">client requirements</text>
+        </g>
+        <g>
+          <circle cx="170" cy="120" r="7" fill="#0E1614" stroke="#1E7A6C" stroke-width="2"/>
+          <text x="170" y="100" text-anchor="middle" class="pl-node-label">DESIGN</text>
+          <text x="170" y="144" text-anchor="middle" class="pl-label">architecture + sign-off</text>
+        </g>
+        <g>
+          <circle cx="300" cy="200" r="7" fill="#0E1614" stroke="#1E7A6C" stroke-width="2"/>
+          <text x="300" y="180" text-anchor="middle" class="pl-node-label">BUILD</text>
+          <text x="300" y="224" text-anchor="middle" class="pl-label">agents + pipelines</text>
+        </g>
+        <g>
+          <circle cx="380" cy="260" r="7" fill="#0E1614" stroke="#B9852E" stroke-width="2"/>
+          <text x="380" y="240" text-anchor="middle" class="pl-node-label">SHIP</text>
+          <text x="380" y="284" text-anchor="middle" class="pl-label">production, monitored</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section id="now">
+    <div class="wrap">
+      <div class="stage-row">
+        <div class="stage-rail"><div class="stage-node"></div></div>
+        <div class="stage-content reveal">
+          <span class="stage-tag">Stage 00 — Now</span>
+          <h2 class="stage-title">What I'm doing this cycle</h2>
+          <p class="stage-sub">A quick read on where my time goes right now, before the project detail below.</p>
+          <div class="now-strip">
+            <div class="now-cell">
+              <div class="now-k">Engagement</div>
+              <div class="now-v">Running two concurrent AI automation platforms for an enterprise client, under Cognida.AI's Data to Decision Intelligence team.</div>
+            </div>
+            <div class="now-cell">
+              <div class="now-k">Studying</div>
+              <div class="now-v">M.Tech in AI/ML at BITS Pilani (WILP) — on track to complete September 2027.</div>
+            </div>
+            <div class="now-cell">
+              <div class="now-k">Next credential</div>
+              <div class="now-v">Preparing for the Google Cloud Professional Machine Learning Engineer certification.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="systems">
+    <div class="wrap">
+      <div class="stage-row">
+        <div class="stage-rail"><div class="stage-node"></div></div>
+        <div class="stage-content reveal">
+          <span class="stage-tag">Stage 01 — Build</span>
+          <h2 class="stage-title">Systems I've built</h2>
+          <p class="stage-sub">Production platforms and agents shipped for enterprise clients — not prototypes sitting in a repo.</p>
+
+          <div class="cards">
+
+            <div class="card">
+              <div class="card-top">
+                <h3 class="card-title">RFQ Automation Platform</h3>
+                <span class="status-pill status-live">Live · 250+ users</span>
+              </div>
+              <p class="card-desc">RFQ automation platform for an enterprise construction-materials client. Designed the caching and access-control architecture, built 3 production AI agents (Snowflake Sync across 72 inboxes, Dedupe Agent, Material Specification Agent), and independently implemented the Azure Static Web Apps deployment pipeline from scratch. Currently leading architecture for a multi-org expansion — decoupling OLTP/OLAP workloads, migrating identity providers, and evaluating shared vs. siloed multi-tenancy models.</p>
+              <div class="card-metrics">
+                <span class="metric-chip">RFQ automation <b>10% → 85%</b></span>
+                <span class="metric-chip">Snowflake latency <b>-65%</b></span>
+                <span class="metric-chip">Cache hit rate <b>~65%</b></span>
+                <span class="metric-chip">Multi-org expansion <b>in progress</b></span>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-top">
+                <h3 class="card-title">Parametric Estimation Platform</h3>
+                <span class="status-pill status-uat">UAT · going live</span>
+              </div>
+              <p class="card-desc">Parametric glazing estimation platform. Replaced 15–16 fragmented legacy estimation tools with one unified calculation engine, and digitized 150+ business formulas, 14 stages, and 300+ variables into an auditable Rule Catalog customers manage directly.</p>
+              <div class="card-metrics">
+                <span class="metric-chip">Formulas digitized <b>150+</b></span>
+                <span class="metric-chip">Takeoff engine <b>99% success</b></span>
+                <span class="metric-chip">Est. users <b>50–60</b></span>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-top">
+                <h3 class="card-title">AutoQuote Dedupe Agent</h3>
+                <span class="status-pill status-live">In production</span>
+              </div>
+              <p class="card-desc">Multi-algorithm scoring agent that auto-flags duplicate quote codes for estimators and regional managers, removing a manual cross-check step from the daily workflow.</p>
+              <div class="card-metrics">
+                <span class="metric-chip">Manual workload <b>-20–30%</b></span>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-top">
+                <h3 class="card-title">AI Document Intelligence Platform</h3>
+                <span class="status-pill status-live">2 variants shipped</span>
+              </div>
+              <p class="card-desc">Client-specific and generalized multi-tenant AI document intelligence systems — semantic search over vector databases, Graph-RAG retrieval pipelines, and an LLM chatbot for document Q&A, backed by multi-tenant backend services.</p>
+              <div class="card-metrics">
+                <span class="metric-chip">Graph-RAG retrieval</span>
+                <span class="metric-chip">Multi-tenant architecture</span>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-top">
+                <h3 class="card-title">Government SaaS UI Migration</h3>
+                <span class="status-pill status-done">Concluded Dec 2025</span>
+              </div>
+              <p class="card-desc">Check automation features for a government court and clerk-facing product, plus infrastructure migration to a new hosting environment and 2 AI-assisted tools to convert legacy code into modern web languages.</p>
+              <div class="card-metrics">
+                <span class="metric-chip">324.5 story points</span>
+                <span class="metric-chip">147 tickets</span>
+                <span class="metric-chip">Top-ranked contributor</span>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-top">
+                <h3 class="card-title">POCs → Follow-on projects</h3>
+                <span class="status-pill status-done">Handed off</span>
+              </div>
+              <p class="card-desc">A business-process automation POC that extracts from PDF/Word docs and instructional videos, generates Gherkin test scripts, and executes them via an agent-based system using Claude Computer Use — plus a procurement optimization platform (4 solvers evaluated, hybrid method shipped). Both outgrew "proof of concept" and were converted into fully staffed follow-on projects.</p>
+              <div class="card-metrics">
+                <span class="metric-chip">Test coverage <b>81%</b></span>
+                <span class="metric-chip">Uptime <b>99.9%</b></span>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-top">
+                <h3 class="card-title">Internal AI Enablement</h3>
+                <span class="status-pill status-done">Internal initiative</span>
+              </div>
+              <p class="card-desc">Built a multi-agent AI development framework combining graph-based retrieval with persistent agent memory, plus token-compression tooling for long-running coding sessions. Delivered an internal "AI Fluency" presentation on Claude Code workflows and agentic engineering principles, and ran a benchmarking POC comparing a zero-shot tabular foundation model against traditional tree ensembles.</p>
+              <div class="card-metrics">
+                <span class="metric-chip">AI Fluency speaker</span>
+                <span class="metric-chip">Internal AI champion</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="lab">
+    <div class="wrap">
+      <div class="stage-row">
+        <div class="stage-rail"><div class="stage-node"></div></div>
+        <div class="stage-content reveal">
+          <span class="stage-tag">Stage 02 — Lab</span>
+          <h2 class="stage-title">What I build on the side</h2>
+          <p class="stage-sub">Independent tools — RAG pipelines, multi-agent systems, self-contained apps — that double as a testing ground before ideas show up in client work. All verifiable on GitHub.</p>
+
+          <div class="cards">
+
+            <div class="card">
+              <div class="card-top">
+                <h3 class="card-title">PR Review Assistant</h3>
+                <span class="status-pill status-live">v8 · 3 branches</span>
+              </div>
+              <p class="card-desc">Single-file, zero-dependency browser app pairing Azure DevOps with the Claude API for AI-powered pull request review — no backend, no build step. Structured Red/Yellow/Green classification, blast-radius detection via import scanning, file-type-aware prompts, and a PR Health Score. Runs entirely against your own ADO org and Anthropic key.</p>
+              <div class="card-metrics">
+                <span class="metric-chip">Runs fully client-side</span>
+                <span class="metric-chip">3 iterations shipped</span>
+              </div>
+              <a class="card-link" href="https://github.com/Pranav-Shivam/PR_Review_Agent/tree/version_3" target="_blank" rel="noopener">View repo →</a>
+            </div>
+
+            <div class="card">
+              <div class="card-top">
+                <h3 class="card-title">AudibleMind</h3>
+                <span class="status-pill status-live">44 commits · active</span>
+              </div>
+              <p class="card-desc">Full-stack platform turning PDFs into structured, multi-persona AI conversations. Upload, chunk, and click any chunk to open a discussion with a runtime-switchable persona — expert, beginner, or advanced — backed by local Ollama or OpenAI. Exports conversations as Markdown.</p>
+              <div class="card-metrics">
+                <span class="metric-chip">FastAPI + CouchDB</span>
+                <span class="metric-chip">React + Vite + Tailwind</span>
+              </div>
+              <a class="card-link" href="https://github.com/Pranav-Shivam/AudibleMind" target="_blank" rel="noopener">View repo →</a>
+            </div>
+
+            <div class="card">
+              <div class="card-top">
+                <h3 class="card-title">MindMap</h3>
+                <span class="status-pill status-live">Production-quality MVP</span>
+              </div>
+              <p class="card-desc">Page-scoped PDF study app with streaming AI Q&A and hybrid vector + text retrieval. Runtime-switchable across OpenAI, Claude, Gemini, and Ollama, with persistent per-page history, global search, and background jobs via Redis + RQ. Architecturally the most complete of my personal RAG apps.</p>
+              <div class="card-metrics">
+                <span class="metric-chip">Qdrant + Redis</span>
+                <span class="metric-chip">SSE streaming</span>
+              </div>
+              <a class="card-link" href="https://github.com/Pranav-Shivam/MindMap" target="_blank" rel="noopener">View repo →</a>
+            </div>
+
+            <div class="card">
+              <div class="card-top">
+                <h3 class="card-title">Claude Code Skill Library</h3>
+                <span class="status-pill status-done">Personal standard</span>
+              </div>
+              <p class="card-desc">A library of Claude Code skills, subagents, and agentic coding standards. Includes a security-scan orchestrator that spawns 10 specialist subagents in parallel — auth, SAST, secrets, deps, IaC, crypto, RBAC — using real tools like trufflehog, semgrep, and checkov to produce a severity-scored, GO/NO-GO report.</p>
+              <div class="card-metrics">
+                <span class="metric-chip">10 parallel subagents</span>
+                <span class="metric-chip">One-line installer</span>
+              </div>
+              <a class="card-link" href="https://github.com/Pranav-Shivam/CodingAgents" target="_blank" rel="noopener">View repo →</a>
+            </div>
+
+          </div>
+
+          <div class="lab-more-title">More from the lab</div>
+          <div class="lab-more">
+
+            <div class="lab-item">
+              <div class="lab-item-top"><span class="lab-item-title">ChatPersona</span></div>
+              <p class="lab-item-desc">Simulated conversations between expert, beginner, and advanced learner personas. FastAPI + React, OpenAI or local Ollama.</p>
+              <a class="card-link" href="https://github.com/Pranav-Shivam/ChatPersona" target="_blank" rel="noopener">View repo →</a>
+            </div>
+
+            <div class="lab-item">
+              <div class="lab-item-top"><span class="lab-item-title">Multi-tts</span></div>
+              <p class="lab-item-desc">Persona-based text-to-speech service in PyTorch, selectable Claude model driving voice generation. Fully Dockerized.</p>
+              <a class="card-link" href="https://github.com/Pranav-Shivam/Multi-tts" target="_blank" rel="noopener">View repo →</a>
+            </div>
+
+            <div class="lab-item">
+              <div class="lab-item-top"><span class="lab-item-title">Document Chunking Pipeline</span></div>
+              <p class="lab-item-desc">Two generations of a PDF/DOCX → semantic chunking service, evolving from sentence-similarity chunking to hybrid multi-format extraction.</p>
+              <a class="card-link" href="https://github.com/Pranav-Shivam/EnhanceCunking" target="_blank" rel="noopener">View latest →</a>
+              <a class="card-link" href="https://github.com/Pranav-Shivam/Chunking-Strategy" target="_blank" rel="noopener">View v1 →</a>
+            </div>
+
+            <div class="lab-item">
+              <div class="lab-item-top"><span class="lab-item-title">HyDE</span></div>
+              <p class="lab-item-desc">Single-file reference implementation of an advanced RAG pipeline — facet routing, dense + sparse retrieval fusion, cross-encoder reranking, self-verification.</p>
+              <a class="card-link" href="https://github.com/Pranav-Shivam/HyDE" target="_blank" rel="noopener">View repo →</a>
+            </div>
+
+            <div class="lab-item">
+              <div class="lab-item-top"><span class="lab-item-title">Universal Article Processor</span></div>
+              <p class="lab-item-desc">Chrome extension (Manifest V3) that extracts rich webpage content via Readability.js, with a FastAPI backend and popup Q&A.</p>
+              <a class="card-link" href="https://github.com/Pranav-Shivam/Extension" target="_blank" rel="noopener">View repo →</a>
+            </div>
+
+            <div class="lab-item">
+              <div class="lab-item-top"><span class="lab-item-title">YouTube Transcript Studio</span></div>
+              <p class="lab-item-desc">Streamlit app converting YouTube videos into structured notes, with a layered transcription fallback via yt-dlp and Whisper.</p>
+              <a class="card-link" href="https://github.com/Pranav-Shivam/Youtube" target="_blank" rel="noopener">View repo →</a>
+            </div>
+
+            <div class="lab-item">
+              <div class="lab-item-top"><span class="lab-item-title">WebRTC Direct</span></div>
+              <p class="lab-item-desc">Minimal single-file peer-to-peer video calling demo — no signaling server dependency beyond what's built in.</p>
+              <a class="card-link" href="https://github.com/Pranav-Shivam/VideoCall-WebRTC" target="_blank" rel="noopener">View repo →</a>
+            </div>
+
+            <div class="lab-item">
+              <div class="lab-item-top"><span class="lab-item-title">Modern Audio Player</span></div>
+              <p class="lab-item-desc">React 19 audio player with drag-and-drop upload, playback speed control, and full ARIA/keyboard accessibility.</p>
+              <a class="card-link" href="https://github.com/Pranav-Shivam/AudioPlayer" target="_blank" rel="noopener">View repo →</a>
+            </div>
+
+            <div class="lab-item">
+              <div class="lab-item-top"><span class="lab-item-title">Local Speech-to-Text</span></div>
+              <p class="lab-item-desc">Minimal FastAPI + Ollama service for local, offline speech interaction.</p>
+              <a class="card-link" href="https://github.com/Pranav-Shivam/speech-to-text" target="_blank" rel="noopener">View repo →</a>
+            </div>
+
+            <div class="lab-item">
+              <div class="lab-item-top">
+                <span class="lab-item-title">MD2PDF</span>
+                <span class="lab-live">Live demo ↗</span>
+              </div>
+              <p class="lab-item-desc">No-build Markdown editor with live preview, Mermaid rendering, 6 document themes, and one-click PDF export.</p>
+              <a class="card-link" href="https://pranav-shivam.github.io/MD2PDF" target="_blank" rel="noopener">Open app →</a>
+              <a class="card-link" href="https://github.com/Pranav-Shivam/MD2PDF" target="_blank" rel="noopener">View repo →</a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="impact">
+    <div class="wrap">
+      <div class="stage-row">
+        <div class="stage-rail"><div class="stage-node"></div></div>
+        <div class="stage-content reveal">
+          <span class="stage-tag">Stage 03 — Validate</span>
+          <h2 class="stage-title">Impact, quantified</h2>
+          <p class="stage-sub">The numbers I'd actually stand behind in a review — not vanity metrics.</p>
+
+          <div class="ledger">
+            <div class="ledger-row">
+              <div class="ledger-val">10% → 85%</div>
+              <div class="ledger-desc"><strong>Automated RFQ response rate</strong> on the RFQ automation platform, now supporting 250+ active users.</div>
+            </div>
+            <div class="ledger-row">
+              <div class="ledger-val">-50 to 65%</div>
+              <div class="ledger-desc">Response-time reduction across two production platforms' search, database, and query layers.</div>
+            </div>
+            <div class="ledger-row">
+              <div class="ledger-val">-40%</div>
+              <div class="ledger-desc">Reduction in client email back-and-forth via the Missing Info Agent proactively resolving data gaps.</div>
+            </div>
+            <div class="ledger-row">
+              <div class="ledger-val">8</div>
+              <div class="ledger-desc">Reusable backend components (audit logging, Snowflake integration, deployment automation, and more) now used across multiple projects org-wide.</div>
+            </div>
+            <div class="ledger-row">
+              <div class="ledger-val">150+ / 14 / 300+</div>
+              <div class="ledger-desc">Business formulas, stages, and variables digitized into the estimation platform's auditable Rule Catalog.</div>
+            </div>
+            <div class="ledger-row">
+              <div class="ledger-val">5+</div>
+              <div class="ledger-desc">Customer engagements delivered to production, spanning full lifecycle from design through post-production support.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="stack">
+    <div class="wrap">
+      <div class="stage-row">
+        <div class="stage-rail"><div class="stage-node"></div></div>
+        <div class="stage-content reveal">
+          <span class="stage-tag">Stage 04 — Tooling</span>
+          <h2 class="stage-title">What I build with</h2>
+          <p class="stage-sub">The stack behind both the client systems and the lab.</p>
+
+          <div class="stack-groups">
+            <div>
+              <div class="stack-group-title">Backend & Data</div>
+              <div class="chip-list">
+                <span class="tech-chip">FastAPI</span>
+                <span class="tech-chip">Python</span>
+                <span class="tech-chip">Snowflake</span>
+                <span class="tech-chip">Databricks</span>
+                <span class="tech-chip">Azure SQL</span>
+                <span class="tech-chip">CouchDB</span>
+                <span class="tech-chip">Qdrant</span>
+                <span class="tech-chip">Redis</span>
+              </div>
+            </div>
+            <div>
+              <div class="stack-group-title">Cloud & Platform</div>
+              <div class="chip-list">
+                <span class="tech-chip">Azure DevOps</span>
+                <span class="tech-chip">AKS</span>
+                <span class="tech-chip">Azure Key Vault</span>
+                <span class="tech-chip">Azure Static Web Apps</span>
+                <span class="tech-chip">Okta / Entra ID</span>
+                <span class="tech-chip">Docker</span>
+              </div>
+            </div>
+            <div>
+              <div class="stack-group-title">AI Systems</div>
+              <div class="chip-list">
+                <span class="tech-chip">RAG & Graph-RAG</span>
+                <span class="tech-chip">Multi-agent orchestration</span>
+                <span class="tech-chip">Claude / OpenAI / Gemini / Ollama</span>
+                <span class="tech-chip">Claude Computer Use</span>
+                <span class="tech-chip">React / TypeScript</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="journey">
+    <div class="wrap">
+      <div class="stage-row">
+        <div class="stage-rail"><div class="stage-node"></div></div>
+        <div class="stage-content reveal">
+          <span class="stage-tag">Stage 05 — Deploy</span>
+          <h2 class="stage-title">Journey</h2>
+          <p class="stage-sub">How the last few years have shipped.</p>
+
+          <div class="tl">
+            <div class="tl-item">
+              <div class="tl-date">Dec 2025 — Present</div>
+              <div>
+                <div class="tl-role">Forward Deployed Engineer, Enterprise Client Engagement — Cognida.AI</div>
+                <div class="tl-desc">Running two concurrent production AI platforms as senior developer, while owning client requirement gathering, architecture sign-off, Azure DevOps project management, and junior developer mentoring.</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-date">2025</div>
+              <div>
+                <div class="tl-role">POCs: Business Process Automation & Procurement Optimization</div>
+                <div class="tl-desc">Two R&D sprints, ~2 months each, timed around client pitching cycles. Both exceeded typical POC scope and were converted into fully staffed follow-on projects.</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-date">Jul 2023 — Dec 2025</div>
+              <div>
+                <div class="tl-role">Government SaaS UI Migration — Cognida.AI</div>
+                <div class="tl-desc">Delivered 147 tickets (324.5 story points) on check automation for a government court and clerk-facing product. Ranked #1 site-wide, Top 3 overall including the platform vendor's own developers.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="growth">
+    <div class="wrap">
+      <div class="stage-row">
+        <div class="stage-rail"><div class="stage-node"></div></div>
+        <div class="stage-content reveal">
+          <span class="stage-tag">Stage 06 — Scale</span>
+          <h2 class="stage-title">Where this is headed</h2>
+          <p class="stage-sub">Currently pursuing an M.Tech in AI/ML (BITS Pilani, WILP, expected Sept 2027) alongside 12 completed learning programs spanning deep learning, LLM evaluation, and applied AI strategy.</p>
+
+          <div class="growth-grid">
+            <div class="goal-card">
+              <span class="goal-tag">1-Year Goal</span>
+              <p>Complete the Google Cloud Professional Machine Learning Engineer certification and apply the learnings to strengthen ML solution architecture and production deployment practices across active engagements — positioning for a transition from AI/ML Engineer to Senior AI/ML Engineer.</p>
+            </div>
+            <div class="goal-card">
+              <span class="goal-tag">3-Year Goal</span>
+              <p>Progress into a Senior AI/ML Engineering role, backed by M.Tech completion, a portfolio of production AI and LLM systems delivered end to end, and demonstrated ownership of solution architecture at scale.</p>
+            </div>
+          </div>
+          <p class="cert-note">// completed: Deep Learning for Computer Vision · Evaluating LLMs in Production · Strategy Workshop · +9 more</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="writing">
+    <div class="wrap">
+      <div class="stage-row">
+        <div class="stage-rail"><div class="stage-node"></div></div>
+        <div class="stage-content reveal">
+          <span class="stage-tag">Stage 07 — Share</span>
+          <h2 class="stage-title">Words, in public</h2>
+          <p class="stage-sub">Long-form writing on <a href="https://medium.com/@pranavsinghtomar" target="_blank" rel="noopener" style="color:var(--teal); text-decoration:none; border-bottom:1px solid var(--teal);">Medium</a> — home lab tooling, AI systems, and the lessons that only show up once something's in production.</p>
+
+          <div class="tl">
+            <div class="tl-item">
+              <div class="tl-date">Jul 23</div>
+              <div>
+                <div class="tl-role">Arcane Isn't Trying to Be Kubernetes. That's Exactly Why It Works.</div>
+                <div class="tl-desc">Why a lightweight container dashboard can beat reaching for Kubernetes the moment a home lab starts to sprawl.</div>
+                <a class="write-link" href="https://medium.com/@pranavsinghtomar/arcane-isnt-trying-to-be-kubernetes-that-s-exactly-why-it-works-8f8eda7ad99b" target="_blank" rel="noopener">Read on Medium →</a>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-date">Jul 12</div>
+              <div>
+                <div class="tl-role">Docker Looks Simple. That's Exactly Why Most People Never Actually Learn It.</div>
+                <div class="tl-desc">A look at how daily familiarity with `docker run` can mask real gaps in understanding how Docker actually works.</div>
+                <a class="write-link" href="https://medium.com/@pranavsinghtomar/docker-looks-simple-thats-exactly-why-most-people-never-actually-learn-it-bc0f2a5c373f" target="_blank" rel="noopener">Read on Medium →</a>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-date">Jul 5</div>
+              <div>
+                <div class="tl-role">AI Agent Has Amnesia. It Bills You for the Privilege.</div>
+                <div class="tl-desc">On the hidden cost of AI agents that re-answer the same question from scratch every time, with no memory of the last call.</div>
+                <a class="write-link" href="https://medium.com/@pranavsinghtomar/ai-agent-has-amnesia-it-bills-you-for-the-privilege-652041b55437" target="_blank" rel="noopener">Read on Medium →</a>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-date">May 23</div>
+              <div>
+                <div class="tl-role">The App That Puts a Million Gamers in the Same Room. Every Night. Without Crashing.</div>
+                <div class="tl-desc">A breakdown of the infrastructure decisions behind Discord's ability to handle millions of concurrent voice users.</div>
+                <a class="write-link" href="https://medium.com/@pranavsinghtomar/the-app-that-puts-a-million-gamers-in-the-same-room-every-night-without-crashing-08acf8233e93" target="_blank" rel="noopener">Read on Medium →</a>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-date">May 17</div>
+              <div>
+                <div class="tl-role">The Bank That Runs on 1959 Code. And the AI That Just Found Its Skeleton Key.</div>
+                <div class="tl-desc">On decades-old core banking systems, the risk they carry, and what AI-assisted modernization actually changes.</div>
+                <a class="write-link" href="https://medium.com/@pranavsinghtomar/the-bank-that-runs-on-1959-code-and-the-ai-that-just-found-its-skeleton-key-08328e14a6ff" target="_blank" rel="noopener">Read on Medium →</a>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-date">May 6</div>
+              <div>
+                <div class="tl-role">9 Seconds. One API Call. Everything Gone.</div>
+                <div class="tl-desc">A cautionary engineering story about a costly production incident, and the real lesson buried underneath it.</div>
+                <a class="write-link" href="https://medium.com/@pranavsinghtomar/9-seconds-one-api-call-everything-gone-and-most-engineers-are-missing-the-real-lesson-86b81ae319fb" target="_blank" rel="noopener">Read on Medium →</a>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-date">May 3</div>
+              <div>
+                <div class="tl-role">How to 10x Your Productivity With Claude Code: A Practical Playbook</div>
+                <div class="tl-desc">Part III of a Claude Code trilogy — a hands-on playbook for getting real productivity gains out of agentic coding.</div>
+                <a class="write-link" href="https://medium.com/@pranavsinghtomar/how-to-10x-your-productivity-with-claude-code-a-practical-playbook-96ef7f5b540d" target="_blank" rel="noopener">Read on Medium →</a>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-date">May 2</div>
+              <div>
+                <div class="tl-role">How Claude Actually Thinks: The Internal Architecture</div>
+                <div class="tl-desc">Part II of the trilogy, digging into how Claude's internal architecture shapes the way it reasons and responds.</div>
+                <a class="write-link" href="https://medium.com/@pranavsinghtomar/how-claude-actually-thinks-the-internal-architecture-3ffb11f8bf06" target="_blank" rel="noopener">Read on Medium →</a>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-date">Apr 12</div>
+              <div>
+                <div class="tl-role">The AI Coding Tool That's Booming and Helping Every SDE</div>
+                <div class="tl-desc">Part I of the trilogy — why Claude Code has been gaining ground fast among developers, and what's driving it.</div>
+                <a class="write-link" href="https://medium.com/@pranavsinghtomar/the-ai-coding-tool-thats-booming-and-helping-every-sde-656e0a09c3bf" target="_blank" rel="noopener">Read on Medium →</a>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-date">Mar 15</div>
+              <div>
+                <div class="tl-role">From ETL to Knowledge ETL: Building a Self-Updating AI Research Engine</div>
+                <div class="tl-desc">Walking through the design of a pipeline that keeps a personal research knowledge base current on its own.</div>
+                <a class="write-link" href="https://medium.com/@pranavsinghtomar/from-etl-to-knowledge-etl-building-a-self-updating-ai-research-engine-30e7a155f328" target="_blank" rel="noopener">Read on Medium →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer id="connect">
+  <div class="footer-inner">
+    <div class="footer-cta">
+      <h2>Let's talk systems.</h2>
+      <p>Open to conversations about senior AI/ML engineering roles, forward-deployed engineering, or just talking shop about production LLM systems.</p>
+    </div>
+    <div class="contact-grid">
+      <a class="btn btn-primary" href="mailto:pranav27singh@gmail.com">Email me →</a>
+      <a class="btn btn-ghost" href="https://www.linkedin.com/in/pranav-shivam-b80ab6212/" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="btn btn-ghost" href="https://github.com/Pranav-Shivam" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn btn-ghost" href="https://medium.com/@pranavsinghtomar" target="_blank" rel="noopener">Medium</a>
+    </div>
+    <div class="footer-bottom">
+      <span>Pranav Shivam — Hyderabad, India</span>
+      <span>Built with a single HTML file. No frameworks.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ---------- Theme toggle (persisted, respects system preference) ----------
+  (function(){
+    var root = document.documentElement;
+    var toggle = document.getElementById('themeToggle');
+    var STORAGE_KEY = 'ps-theme';
+
+    function safeGet(key){
+      try { return localStorage.getItem(key); } catch(e){ return null; }
+    }
+    function safeSet(key, val){
+      try { localStorage.setItem(key, val); } catch(e){ /* storage unavailable, ignore */ }
+    }
+
+    function applyTheme(theme){
+      root.setAttribute('data-theme', theme);
+      var isDark = theme === 'dark';
+      toggle.setAttribute('aria-pressed', String(isDark));
+      toggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+
+    var stored = safeGet(STORAGE_KEY);
+    var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    applyTheme(stored === 'dark' || stored === 'light' ? stored : (prefersDark ? 'dark' : 'light'));
+
+    toggle.addEventListener('click', function(){
+      var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      applyTheme(next);
+      safeSet(STORAGE_KEY, next);
+    });
+
+    // Follow system changes only if the person never chose a theme manually
+    if (window.matchMedia){
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e){
+        if (!safeGet(STORAGE_KEY)) applyTheme(e.matches ? 'dark' : 'light');
+      });
+    }
+  })();
+
+  // ---------- Mobile nav ----------
+  (function(){
+    var burger = document.getElementById('navBurger');
+    var navlinks = document.getElementById('navlinks');
+    burger.addEventListener('click', function(){
+      var isOpen = navlinks.classList.toggle('open');
+      burger.setAttribute('aria-expanded', String(isOpen));
+    });
+    navlinks.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', function(){
+        navlinks.classList.remove('open');
+        burger.setAttribute('aria-expanded', 'false');
+      });
+    });
+  })();
+
+  // ---------- Scroll reveal ----------
+  var revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach(function(el){ io.observe(el); });
+  } else {
+    revealEls.forEach(function(el){ el.classList.add('in'); });
+  }
+</script>
+
+</body>
+</html>

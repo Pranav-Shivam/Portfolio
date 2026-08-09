@@ -625,7 +625,7 @@
 
           <div class="case-study-head">
             <h3 class="case-study-title">Parametric Estimation Platform</h3>
-            <span class="status-pill status-uat">UAT · going live</span>
+            <span class="status-pill status-live">Live · scaled in production</span>
           </div>
 
           <div class="flow-strip">
@@ -654,6 +654,7 @@
                 <li><strong>Extracting formulas from inconsistent legacy tools.</strong> Different tools used different rounding conventions and unit systems for the same calculation. Built a shadow-mode validation harness that ran the new engine against the same historical projects as every legacy tool before any customer cutover, instead of spot-checking.</li>
                 <li><strong>Live-editable formulas vs. issued quotes.</strong> A customer changing a formula mid-cycle can't retroactively alter a quote already sent to their customer. Solved with immutable formula-version snapshots pinned to each quote at creation time.</li>
                 <li><strong>300+ variables per calculation.</strong> Naive re-evaluation of all 14 stages per change was slow. Precomputed shared intermediate values across stages to cut redundant calculation.</li>
+                <li><strong>Snowflake couldn't hold the live path at full load.</strong> Snowflake's warehouse-per-query model is built for batch/reporting, not sub-second interactive reads from every estimator session at once — latency climbed as concurrent usage grew past go-live. Moved the live path off it rather than tuning around the mismatch.</li>
               </ul>
             </div>
             <div class="case-col">
@@ -662,6 +663,7 @@
                 <li><strong>Rules-based over LLM.</strong> Deterministic and auditable at near-zero marginal cost per calculation, versus an LLM's non-determinism and missing audit trail — wrong fit for pricing math, right fit here.</li>
                 <li><strong>Customer-editable Rule Catalog over engineering-gated changes.</strong> Larger support/QA surface, but removes the estimation team as a bottleneck on every formula tweak.</li>
                 <li><strong>Shadow-mode cutover over big-bang replacement.</strong> Slower rollout, but zero pricing-error incidents at go-live — validated against legacy-tool output first, not after.</li>
+                <li><strong>Redis + Azure SQL over Snowflake for the live path.</strong> Split the workload instead of scaling Snowflake harder: Redis for hot-path reads (Rule Catalog lookups, in-progress calc state), Azure SQL for transactional writes, Snowflake kept for batch/reporting only. Same OLTP/OLAP separation flagged as a scaling risk on the RFQ platform — executed here first, ahead of a production incident instead of after one.</li>
               </ul>
             </div>
           </div>
@@ -671,7 +673,9 @@
             <span class="metric-chip">Formulas digitized <b>150+</b></span>
             <span class="metric-chip">Variables/project <b>300+</b></span>
             <span class="metric-chip">Takeoff success <b>99%</b></span>
-            <span class="metric-chip">Users at go-live <b>50–60</b></span>
+            <span class="metric-chip">Users <b>50–60 at go-live, scaled in production</b></span>
+            <span class="metric-chip">Data layer <b>Snowflake → Redis + Azure SQL</b></span>
+            <span class="metric-chip">Production incidents <b>zero</b></span>
           </div>
 
           <div class="case-study-head">
@@ -722,19 +726,124 @@
             <span class="metric-chip">Tenant isolation <b>query-time</b></span>
           </div>
 
+          <div class="case-study-head">
+            <h3 class="case-study-title">LLM-Powered Document-to-Test Automation System</h3>
+            <span class="status-pill status-live">POC → staffed follow-on</span>
+          </div>
+
+          <div class="flow-strip">
+            <span class="fs-step">PDF / video docs</span><span class="fs-arrow">→</span>
+            <span class="fs-step">Parsing + OCR/ASR</span><span class="fs-arrow">→</span>
+            <span class="fs-step">Semantic chunking</span><span class="fs-arrow">→</span>
+            <span class="fs-step">LLM step extraction</span><span class="fs-arrow">→</span>
+            <span class="fs-step">Gherkin generation</span><span class="fs-arrow">→</span>
+            <span class="fs-step">Schema/source validation</span><span class="fs-arrow">→</span>
+            <span class="fs-step">Claude Computer Use execution</span><span class="fs-arrow">→</span>
+            <span class="fs-step">Pass/fail + trace</span>
+          </div>
+
+          <div class="case-block">
+            <h3>Problem</h3>
+            <p>QA teams kept business procedures — compliance workflows, internal runbooks — as static PDFs and screen recordings. Every application change forced someone to re-read a 20–40 page procedure or re-watch a walkthrough, then hand-write and run a test script per step. Authoring lagged the document catalog by weeks and scaled with headcount, not document volume — a linear cost against exponential doc growth, with silent transcription errors baked into whatever a tired reviewer typed.</p>
+          </div>
+
+          <div class="case-block">
+            <h3>Solution</h3>
+            <p>A batch pipeline that turns a procedure document into an executed pass/fail result — no manual test-writing step. PDFs, DOCX, and video transcripts are parsed and chunked; two-pass LLM extraction (cheap classifier, then full extractor) pulls discrete steps with dependency links intact; steps compile to Gherkin; a validation gate checks each step against its literal source span before anything executes; validated scenarios run against the live app via isolated Claude Computer Use sessions, each producing a pass/fail result plus a per-step screenshot trace. No result ships without a trace behind it.</p>
+          </div>
+
+          <div class="case-grid">
+            <div class="case-col">
+              <h3>Challenges</h3>
+              <ul>
+                <li><strong>Noisy source material.</strong> OCR errors on scans and ASR errors on video blur step boundaries. Layout-aware parsing with a per-chunk confidence score — low-confidence chunks are flagged before extraction, not after.</li>
+                <li><strong>Context loss across chunks.</strong> Steps reference earlier steps ("using the record created above"); naive per-chunk extraction drops that. A sliding context window carries prior-chunk state forward, with explicit step-dependency links instead of independent chunks.</li>
+                <li><strong>LLM hallucination in step extraction.</strong> The model can invent a plausible step absent from the source. Every extracted step is checked against the exact source span it claims to derive from — no matching span, no step.</li>
+                <li><strong>Execution flakiness.</strong> Same scenario, different runtime UI state (load timing, layout shift) reads as a false failure. Backoff-retried up to three attempts before classifying as real, with screenshot-diffing to separate a genuine regression from a timing flake.</li>
+              </ul>
+            </div>
+            <div class="case-col">
+              <h3>Trade-offs</h3>
+              <ul>
+                <li><strong>Claude Computer Use over scripted automation (Selenium/Playwright).</strong> A scripted test breaks the moment a selector changes; CU drives the UI the way a human reads intent, without needing the selector to exist. Traded a faster, deterministic script for an agent that survives UI drift — at 5–10x the per-step cost and materially higher variance in run time.</li>
+                <li><strong>Validation gate tuned for precision over recall.</strong> A step phrased well but not matching its source span verbatim gets rejected, not accepted on "close enough." That caps automated coverage below 100% — the 19% left in the review queue is partly this trade-off's cost, not pure pipeline failure — accepted because a false positive here ships an untested step as tested.</li>
+                <li><strong>LLM extraction over rule-based parsing.</strong> Regex/rules are brittle across varied document formats and free-text video transcripts. Accepted probabilistic extraction and paid for it with the validation gate above, rather than forcing a rules engine onto open-ended natural language.</li>
+                <li><strong>Two-tier model routing over one model for everything.</strong> A cheap classification pass filters irrelevant content before the expensive extractor touches it — full-model-on-everything was simpler but meaningfully costlier at document-catalog scale.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="case-grid">
+            <div class="case-col">
+              <h3>Failure Scenarios in Production</h3>
+              <ul>
+                <li><strong>One shared step breaks, fifty scenarios fail at once.</strong> A login-button move or nav-bar change fails every scenario that depends on that shared setup step simultaneously — without dedup, one root cause floods the review queue as fifty unrelated-looking tickets.</li>
+                <li><strong>Document revised mid-queue.</strong> A doc gets updated while its scenario sits queued for execution — running the stale scenario produces a result that's technically accurate against text that no longer exists, and nobody notices until someone acts on it.</li>
+                <li><strong>Agent hits an interstitial the source never described.</strong> A consent banner or permission dialog the procedure doc doesn't mention can trap a Computer Use session in a retry loop against a state it has no instructions for, burning execution budget on a scenario that was never going to resolve itself.</li>
+                <li><strong>Session timeout mid-scenario.</strong> A 15-step scenario hits an auth timeout at step 12. A naive retry restarts from step one — discarding 11 confirmed-good steps and doubling cost for a failure that was never a real regression.</li>
+              </ul>
+            </div>
+            <div class="case-col">
+              <h3>Production Safeguards</h3>
+              <ul>
+                <li><strong>Failure clustering before human review.</strong> Trace similarity groups scenarios failing at the same step signature, so one broken shared step surfaces as one ticket with fifty affected scenarios attached, not fifty separate ones.</li>
+                <li><strong>Version-pinned scenarios.</strong> Each Gherkin scenario is generated against a content-hash of its source doc; execution checks that hash at run time and invalidates — rather than runs — a scenario whose source has since changed.</li>
+                <li><strong>Two-level circuit breakers.</strong> A session stuck outside any recognized UI state for N actions is killed and flagged, not retried indefinitely. A batch whose failure rate spikes past baseline halts its remaining queue and pages for review instead of burning budget on scenarios likely failing for the same root cause.</li>
+                <li><strong>Checkpointed resume.</strong> Long scenarios persist state after each confirmed step; a session-timeout failure resumes from the last confirmed checkpoint post re-auth, instead of restarting from step one.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="case-grid">
+            <div class="case-col">
+              <h3>Scaling &amp; Performance</h3>
+              <ul>
+                <li><strong>Parallel document workers.</strong> Each doc or video processes independently in a worker pool — the catalog scales by adding workers, not redesigning the pipeline.</li>
+                <li><strong>Execution isolation, with pooling where it pays off.</strong> Each scenario defaults to its own Computer Use session to avoid UI-state collision; scenarios sharing expensive setup (same login, same base state) pool a warm session instead, trading strict isolation for throughput on that subset.</li>
+                <li><strong>Chunk-level caching.</strong> Content-hash chunk caching skips re-extraction on document sections unchanged since the last run, with a periodic full re-run to catch the rare hash-boundary miss.</li>
+                <li><strong>Execution is the bottleneck, not generation.</strong> Live UI interaction is far slower than parsing or generation. Execution is queued and batched separately, so a slow execution backlog can't stall new document ingestion.</li>
+              </ul>
+            </div>
+            <div class="case-col">
+              <h3>Observability &amp; Reliability</h3>
+              <ul>
+                <li><strong>Per-stage structured logs.</strong> Doc ID, chunk ID, extraction confidence, validation verdict, and execution trace ID are logged at every stage — a failure traces to the exact input and stage that caused it, not just "test failed."</li>
+                <li><strong>Trace, not just a verdict.</strong> A screenshot and step trace is captured per executed step — the only reliable way to tell a real regression from a UI timing flake without re-running blind. Full-fidelity traces are retained for failures; passing runs are sampled to bound storage growth.</li>
+                <li><strong>Three-way failure classification.</strong> Parse failure, validation rejection (likely hallucination), and execution failure route to three different review queues, because the fix for each is different.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="chip-list chip-list-spaced">
+            <span class="tech-chip">PDF/DOCX + video parsing</span>
+            <span class="tech-chip">Two-tier LLM routing</span>
+            <span class="tech-chip">Gherkin / Cucumber</span>
+            <span class="tech-chip">Claude Computer Use</span>
+            <span class="tech-chip">Agent orchestration</span>
+          </div>
+
+          <div class="card-metrics" style="margin-bottom:56px;">
+            <span class="metric-chip">Test coverage <b>81%</b></span>
+            <span class="metric-chip">Execution uptime <b>99.9%</b></span>
+            <span class="metric-chip">Retry policy <b>3x backoff + checkpointed resume</b></span>
+            <span class="metric-chip">Validation gate <b>precision-tuned, source-span-checked</b></span>
+            <span class="metric-chip">Circuit breakers <b>session + batch level</b></span>
+            <span class="metric-chip">Outcome <b>POC → fully staffed follow-on</b></span>
+          </div>
+
           <p class="stage-sub" style="margin-bottom:20px;">Everything else shipped or handed off this cycle — smaller in scope, still real production or client-facing outcomes.</p>
 
           <div class="cards">
 
             <div class="card">
               <div class="card-top">
-                <h3 class="card-title">POCs → Follow-on projects</h3>
+                <h3 class="card-title">Procurement Optimization Platform</h3>
                 <span class="status-pill status-done">Handed off</span>
               </div>
-              <p class="card-desc">A business-process automation POC that extracts from PDF/Word docs and instructional videos, generates Gherkin test scripts, and executes them via an agent-based system using Claude Computer Use — plus a procurement optimization platform (4 solvers evaluated, hybrid method shipped). Both outgrew "proof of concept" and were converted into fully staffed follow-on projects.</p>
+              <p class="card-desc">A POC evaluating four optimization solvers for procurement sourcing decisions, shipped as a hybrid method combining the strongest properties of each rather than picking a single winner outright. Outgrew "proof of concept" and was converted into a fully staffed follow-on project, alongside the document-to-test automation system above.</p>
               <div class="card-metrics">
-                <span class="metric-chip">Test coverage <b>81%</b></span>
-                <span class="metric-chip">Uptime <b>99.9%</b></span>
+                <span class="metric-chip">Solvers evaluated <b>4</b></span>
+                <span class="metric-chip">Method shipped <b>Hybrid</b></span>
               </div>
             </div>
 

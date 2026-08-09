@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pranav Shivam — AI/ML Engineer, Production LLM & Agentic Systems</title>
-<meta name="description" content="Pranav Shivam — AI/ML Engineer building production LLM and agentic systems at Cognida.AI. RFQ extraction pipelines, multi-tenant AI platforms, and enterprise automation at scale.">
+<title>Pranav Shivam — AI/ML Engineer, Production LLM Systems</title>
+<meta name="description" content="Pranav Shivam — AI/ML Engineer who builds LLM systems that run in production, not demos. RFQ extraction pipelines, multi-tenant AI platforms, and enterprise automation at scale.">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="favicon.svg">
@@ -446,8 +446,8 @@
     <div>
       <p class="eyebrow"><span class="dot"></span>Building production AI systems · Cognida.AI</p>
       <h1 class="name">Pranav Shivam</h1>
-      <p class="role">AI/ML Engineer — Production LLM & Agentic Systems</p>
-      <p class="tagline">I design and ship AI systems that survive contact with production: multi-agent pipelines processing real documents at real scale, with the retry logic, caching, and cost controls that never make it into a demo. Outside client work, I run an independent lab — RAG pipelines, multi-agent systems, self-hosted tools — to pressure-test ideas before they reach production.</p>
+      <p class="role">AI/ML Engineer — Production LLM Systems</p>
+      <p class="tagline">I design and ship LLM-driven backend systems — document parsing, ETL, and automation pipelines running in production, not prototypes. Outside client work, I run an independent lab — RAG pipelines, multi-agent systems, self-hosted tools — to pressure-test ideas before they reach production.</p>
       <div class="hero-ctas">
         <a class="btn btn-primary" href="#flagship">View flagship system →</a>
         <a class="btn btn-ghost" href="#connect">Get in touch</a>
@@ -572,7 +572,7 @@
             <div class="case-col">
               <h3>Scaling: 250 → ~1,500 users</h3>
               <ul>
-                <li><strong>Where it breaks first.</strong> At current volume (~3,000+ RFQs/month across 72 inboxes, estimated), the shared OLTP/OLAP Snowflake workload and a fixed connection pool are the first ceiling — projected to saturate well before 1,500 users if write-heavy dedupe queries keep competing with estimator read traffic on the same warehouse.</li>
+                <li><strong>Where it breaks first.</strong> At current volume (5,000–8,000 inbound emails/day across 72 inboxes, 400,000+ RFQs processed to date), the shared OLTP/OLAP Snowflake workload and a fixed connection pool are the first ceiling — projected to saturate well before it can carry thousands of concurrent users if write-heavy dedupe queries keep competing with estimator read traffic on the same warehouse.</li>
                 <li><strong>Fix in progress, not a rewrite.</strong> Decoupling OLTP from OLAP onto separate warehouses — ingestion writes on one, estimator dashboards and reporting on the other — so a burst of inbound RFQs can't stall someone pulling a report.</li>
                 <li><strong>Identity at 6x the orgs.</strong> Single-org Entra ID setup doesn't hold under multi-org expansion — evaluating shared-schema-with-tenant-isolation vs. siloed-per-org before onboarding the next cohort, since migrating tenancy model after data lands is far more expensive than before.</li>
                 <li><strong>Capacity math, not guesswork.</strong> Peak inbound is bursty (Monday-morning RFQ floods across 72 inboxes) rather than flat — sizing the ingestion queue and LLM-call concurrency limits off p95 burst volume, not average daily volume.</li>
@@ -603,9 +603,9 @@
             <span class="metric-chip">RFQ automation <b>10% → 85%</b></span>
             <span class="metric-chip">Snowflake latency <b>-65%</b></span>
             <span class="metric-chip">Cache hit rate <b>~65%</b></span>
-            <span class="metric-chip">Manual dedupe workload <b>-20–30%</b></span>
+            <span class="metric-chip">Manual RFQ processing effort <b>-60–70%</b></span>
             <span class="metric-chip">Customer email back-and-forth <b>-40%</b></span>
-            <span class="metric-chip">Volume <b>~3,000+ RFQs/mo (est.)</b></span>
+            <span class="metric-chip">Volume <b>5,000–8,000 emails/day · 400,000+ RFQs to date</b></span>
             <span class="metric-chip">Retry policy <b>3x backoff → DLQ</b></span>
             <span class="metric-chip">Users <b>250+ live · designing for ~1,500</b></span>
           </div>
@@ -1041,7 +1041,15 @@
           <div class="ledger">
             <div class="ledger-row">
               <div class="ledger-val">10% → 85%</div>
-              <div class="ledger-desc"><strong>Automated RFQ response rate</strong> on the RFQ automation platform, now supporting 250+ active users.</div>
+              <div class="ledger-desc"><strong>Automated RFQ response rate</strong> on the RFQ automation platform, now scaling toward thousands of concurrent users.</div>
+            </div>
+            <div class="ledger-row">
+              <div class="ledger-val">400,000+</div>
+              <div class="ledger-desc">RFQs processed to date, from 5,000–8,000 inbound emails/day across 72 regional inboxes.</div>
+            </div>
+            <div class="ledger-row">
+              <div class="ledger-val">-60 to 70%</div>
+              <div class="ledger-desc">Reduction in manual RFQ processing effort since automation went live.</div>
             </div>
             <div class="ledger-row">
               <div class="ledger-val">-50 to 65%</div>

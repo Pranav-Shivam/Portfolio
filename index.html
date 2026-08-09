@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pranav Shivam — Forward Deployed Engineer, AI/ML Systems</title>
-<meta name="description" content="Pranav Shivam — Forward Deployed Engineer building production AI systems at Cognida.AI. RFQ automation, estimation platforms, and enterprise automation pipelines.">
+<title>Pranav Shivam — AI/ML Engineer, Production LLM & Agentic Systems</title>
+<meta name="description" content="Pranav Shivam — AI/ML Engineer building production LLM and agentic systems at Cognida.AI. RFQ extraction pipelines, multi-tenant AI platforms, and enterprise automation at scale.">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="favicon.svg">
@@ -83,6 +83,7 @@
   nav.topnav{
     position:sticky; top:0; z-index:50;
     background:var(--nav-bg);
+    -webkit-backdrop-filter:blur(8px);
     backdrop-filter:blur(8px);
     border-bottom:1px solid var(--line);
   }
@@ -271,6 +272,29 @@
   }
   .metric-chip b{color:var(--teal);}
 
+  /* ---------- FLAGSHIP / SYSTEM DESIGN CASE STUDY ---------- */
+  .flow-strip{
+    display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+    font-family:var(--mono); font-size:12.5px; color:var(--ink-soft);
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:18px 20px; margin:0 0 32px; transition:background-color .35s ease;
+  }
+  .flow-strip .fs-step{
+    background:var(--paper-alt); border:1px solid var(--line); border-radius:6px;
+    padding:6px 10px; color:var(--ink); white-space:nowrap;
+  }
+  .flow-strip .fs-arrow{color:var(--teal);}
+  .case-grid{display:grid; grid-template-columns:1fr 1fr; gap:32px; margin:0 0 32px;}
+  @media(max-width:760px){ .case-grid{grid-template-columns:1fr;} }
+  .case-col h3, .case-block h3{font-family:var(--disp); font-weight:600; font-size:16px; margin:0 0 10px;}
+  .case-col ul{margin:0; padding-left:18px;}
+  .case-col ul li{font-size:14.5px; color:var(--ink-soft); line-height:1.65; margin-bottom:10px;}
+  .case-col ul li strong{color:var(--ink);}
+  .case-block{margin:0 0 28px;}
+  .case-block p{font-size:14.5px; color:var(--ink-soft); line-height:1.65; max-width:74ch;}
+  .case-block p strong{color:var(--ink);}
+  .chip-list-spaced{margin-bottom:20px;}
+
   /* ---------- LAB (PERSONAL PROJECTS) ---------- */
   .card-link{
     font-family:var(--mono); font-size:11.5px; color:var(--teal); text-decoration:none;
@@ -313,8 +337,8 @@
   .ledger-desc strong{color:var(--ink); font-weight:600;}
 
   /* ---------- STACK ---------- */
-  .stack-groups{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
-  @media(max-width:760px){ .stack-groups{grid-template-columns:1fr 1fr;} }
+  .stack-groups{display:grid; grid-template-columns:repeat(4,1fr); gap:24px;}
+  @media(max-width:900px){ .stack-groups{grid-template-columns:1fr 1fr;} }
   @media(max-width:520px){ .stack-groups{grid-template-columns:1fr;} }
   .stack-group-title{
     font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:0.08em;
@@ -343,6 +367,7 @@
     display:inline-flex; align-items:center; gap:4px; margin-top:8px;
   }
   .write-link:hover{text-decoration:underline;}
+  .inline-link{color:var(--teal); text-decoration:none; border-bottom:1px solid var(--teal);}
 
   /* ---------- GROWTH ---------- */
   .growth-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
@@ -391,7 +416,9 @@
     <a href="#top" class="brand"><span class="mark">PS</span> Pranav Shivam</a>
     <div class="nav-right">
       <ul class="navlinks" id="navlinks">
+        <li><a href="#flagship">Flagship</a></li>
         <li><a href="#systems">Systems</a></li>
+        <li><a href="#design">Design</a></li>
         <li><a href="#lab">Lab</a></li>
         <li><a href="#impact">Impact</a></li>
         <li><a href="#stack">Stack</a></li>
@@ -414,12 +441,12 @@
 <header class="hero" id="top">
   <div class="hero-inner">
     <div>
-      <p class="eyebrow"><span class="dot"></span>Currently building for an enterprise client · Cognida.AI</p>
+      <p class="eyebrow"><span class="dot"></span>Building production AI systems · Cognida.AI</p>
       <h1 class="name">Pranav Shivam</h1>
-      <p class="role">Forward Deployed Engineer — AI/ML Systems</p>
-      <p class="tagline">I sit between the client's whiteboard and production. Outside client work, I run an independent lab — RAG pipelines, multi-agent systems, self-hosted tools — to test ideas before they show up in production.</p>
+      <p class="role">AI/ML Engineer — Production LLM & Agentic Systems</p>
+      <p class="tagline">I design and ship AI systems that survive contact with production: multi-agent pipelines processing real documents at real scale, with the retry logic, caching, and cost controls that never make it into a demo. Outside client work, I run an independent lab — RAG pipelines, multi-agent systems, self-hosted tools — to pressure-test ideas before they reach production.</p>
       <div class="hero-ctas">
-        <a class="btn btn-primary" href="#systems">View systems built →</a>
+        <a class="btn btn-primary" href="#flagship">View flagship system →</a>
         <a class="btn btn-ghost" href="#connect">Get in touch</a>
       </div>
     </div>
@@ -487,30 +514,90 @@
     </div>
   </section>
 
+  <section id="flagship">
+    <div class="wrap">
+      <div class="stage-row">
+        <div class="stage-rail"><div class="stage-node"></div></div>
+        <div class="stage-content reveal">
+          <span class="stage-tag">Stage 01 — Flagship</span>
+          <h2 class="stage-title">LLM-Based RFQ Extraction &amp; Processing System</h2>
+          <p class="stage-sub">The system I'd walk through in a system-design interview. Turns unstructured RFQ emails across 72 inboxes into validated, quote-ready data — with the retry logic, caching, and human-review fallback that make it trustworthy in production, not just a demo.</p>
+
+          <div class="flow-strip">
+            <span class="fs-step">Email (72 inboxes)</span><span class="fs-arrow">→</span>
+            <span class="fs-step">Graph API ingestion</span><span class="fs-arrow">→</span>
+            <span class="fs-step">ETL → Snowflake</span><span class="fs-arrow">→</span>
+            <span class="fs-step">PDF extraction</span><span class="fs-arrow">→</span>
+            <span class="fs-step">Chunking</span><span class="fs-arrow">→</span>
+            <span class="fs-step">LLM extraction</span><span class="fs-arrow">→</span>
+            <span class="fs-step">Dedupe + Spec agents</span><span class="fs-arrow">→</span>
+            <span class="fs-step">Structured output</span>
+          </div>
+
+          <div class="case-block">
+            <h3>Problem</h3>
+            <p>An enterprise construction-materials distributor received RFQs as unstructured email attachments — PDFs, scanned specs, spreadsheets — across 72 regional inboxes. Estimators manually read each document, extracted material specs, cross-checked for duplicate quote codes, and re-keyed data into the quoting system. At baseline, only ~10% of RFQs cleared without manual intervention; the rest cost an estimator 15–30 minutes each, and manual re-keying errors propagated straight into customer-facing quotes.</p>
+          </div>
+
+          <div class="case-block">
+            <h3>Solution</h3>
+            <p>Built an ingestion-to-structured-output pipeline that needs no human touch for the majority of RFQs. Three production agents run it: a <strong>Snowflake Sync Agent</strong> normalizing intake across all 72 inboxes, a <strong>Dedupe Agent</strong> using multi-algorithm scoring to flag duplicate quote codes before they reach an estimator, and a <strong>Material Specification Agent</strong> extracting and validating spec data against the product catalog. A fourth, the <strong>Missing Info Agent</strong>, proactively emails the customer when required fields are absent instead of leaving the RFQ stuck in a queue. Automation rate: 10% → 85%.</p>
+          </div>
+
+          <div class="case-grid">
+            <div class="case-col">
+              <h3>Challenges</h3>
+              <ul>
+                <li><strong>Ingestion at scale.</strong> 72 inboxes on Graph API guarantees rate limits and dropped webhooks. Handled with delta-query polling as a fallback, exponential backoff on 429s, and idempotent writes keyed on message ID — a redelivered webhook can't create a duplicate record.</li>
+                <li><strong>Inconsistent PDF quality.</strong> Scanned documents and specs embedded in free text break naive extraction. Layout-aware parsing plus a per-field confidence score; anything below threshold routes to human review instead of shipping a wrong spec into a quote.</li>
+                <li><strong>Cost and latency at inbox scale.</strong> Full extraction on every attachment across 72 inboxes gets expensive fast. A caching layer (~65% hit rate — many RFQs reuse near-identical spec templates from repeat customers) plus two-tier model routing (cheap pass for classification/dedupe pre-filter, full model only when needed) cut end-to-end latency ~65%.</li>
+                <li><strong>Duplicate detection isn't one rule.</strong> Quote codes resurface with formatting differences, revision numbers, or via different inboxes. Multi-algorithm scoring, not a single string match, cut manual cross-check workload 20–30%.</li>
+              </ul>
+            </div>
+            <div class="case-col">
+              <h3>Decisions &amp; Trade-offs</h3>
+              <ul>
+                <li><strong>Human-in-the-loop over full automation.</strong> A wrong material spec in a customer quote is expensive to unwind. Traded a few points of automation rate for correctness — 85% automated, 15% to review, instead of forcing 100%.</li>
+                <li><strong>Caching over always-fresh extraction.</strong> Re-running LLM extraction on every RFQ regardless of similarity is simpler but slower and costlier. Cached against a similarity threshold, accepting cache-invalidation complexity for the latency/cost win.</li>
+                <li><strong>Splitting OLTP/OLAP, not patching around it.</strong> One Snowflake workload was the right call to ship fast early. As multi-org expansion increases write volume, that coupling now bottlenecks — currently decoupling rather than working around it.</li>
+                <li><strong>Designing multi-tenancy for ~1,500 users, not the current 250.</strong> The single-org identity model doesn't hold under multi-org expansion. Evaluating shared-schema-with-isolation vs. siloed-per-org before committing, since the wrong call is expensive to reverse once more orgs are onboarded.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="chip-list chip-list-spaced">
+            <span class="tech-chip">FastAPI</span>
+            <span class="tech-chip">Snowflake</span>
+            <span class="tech-chip">Azure SQL</span>
+            <span class="tech-chip">Microsoft Graph API</span>
+            <span class="tech-chip">Azure OpenAI</span>
+            <span class="tech-chip">Azure Static Web Apps</span>
+            <span class="tech-chip">Entra ID</span>
+          </div>
+
+          <div class="card-metrics">
+            <span class="metric-chip">RFQ automation <b>10% → 85%</b></span>
+            <span class="metric-chip">Snowflake latency <b>-65%</b></span>
+            <span class="metric-chip">Cache hit rate <b>~65%</b></span>
+            <span class="metric-chip">Manual dedupe workload <b>-20–30%</b></span>
+            <span class="metric-chip">Customer email back-and-forth <b>-40%</b></span>
+            <span class="metric-chip">Users <b>250+ live · designing for ~1,500</b></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="systems">
     <div class="wrap">
       <div class="stage-row">
         <div class="stage-rail"><div class="stage-node"></div></div>
         <div class="stage-content reveal">
-          <span class="stage-tag">Stage 01 — Build</span>
-          <h2 class="stage-title">Systems I've built</h2>
-          <p class="stage-sub">Production platforms and agents shipped for enterprise clients — not prototypes sitting in a repo.</p>
+          <span class="stage-tag">Stage 02 — Build</span>
+          <h2 class="stage-title">Other systems I've built</h2>
+          <p class="stage-sub">Production platforms shipped for enterprise clients, beyond the flagship system above — not prototypes sitting in a repo.</p>
 
           <div class="cards">
-
-            <div class="card">
-              <div class="card-top">
-                <h3 class="card-title">RFQ Automation Platform</h3>
-                <span class="status-pill status-live">Live · 250+ users</span>
-              </div>
-              <p class="card-desc">RFQ automation platform for an enterprise construction-materials client. Designed the caching and access-control architecture, built 3 production AI agents (Snowflake Sync across 72 inboxes, Dedupe Agent, Material Specification Agent), and independently implemented the Azure Static Web Apps deployment pipeline from scratch. Currently leading architecture for a multi-org expansion — decoupling OLTP/OLAP workloads, migrating identity providers, and evaluating shared vs. siloed multi-tenancy models.</p>
-              <div class="card-metrics">
-                <span class="metric-chip">RFQ automation <b>10% → 85%</b></span>
-                <span class="metric-chip">Snowflake latency <b>-65%</b></span>
-                <span class="metric-chip">Cache hit rate <b>~65%</b></span>
-                <span class="metric-chip">Multi-org expansion <b>in progress</b></span>
-              </div>
-            </div>
 
             <div class="card">
               <div class="card-top">
@@ -527,17 +614,6 @@
 
             <div class="card">
               <div class="card-top">
-                <h3 class="card-title">AutoQuote Dedupe Agent</h3>
-                <span class="status-pill status-live">In production</span>
-              </div>
-              <p class="card-desc">Multi-algorithm scoring agent that auto-flags duplicate quote codes for estimators and regional managers, removing a manual cross-check step from the daily workflow.</p>
-              <div class="card-metrics">
-                <span class="metric-chip">Manual workload <b>-20–30%</b></span>
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="card-top">
                 <h3 class="card-title">AI Document Intelligence Platform</h3>
                 <span class="status-pill status-live">2 variants shipped</span>
               </div>
@@ -545,19 +621,6 @@
               <div class="card-metrics">
                 <span class="metric-chip">Graph-RAG retrieval</span>
                 <span class="metric-chip">Multi-tenant architecture</span>
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="card-top">
-                <h3 class="card-title">Government SaaS UI Migration</h3>
-                <span class="status-pill status-done">Concluded Dec 2025</span>
-              </div>
-              <p class="card-desc">Check automation features for a government court and clerk-facing product, plus infrastructure migration to a new hosting environment and 2 AI-assisted tools to convert legacy code into modern web languages.</p>
-              <div class="card-metrics">
-                <span class="metric-chip">324.5 story points</span>
-                <span class="metric-chip">147 tickets</span>
-                <span class="metric-chip">Top-ranked contributor</span>
               </div>
             </div>
 
@@ -591,12 +654,54 @@
     </div>
   </section>
 
+  <section id="design">
+    <div class="wrap">
+      <div class="stage-row">
+        <div class="stage-rail"><div class="stage-node"></div></div>
+        <div class="stage-content reveal">
+          <span class="stage-tag">Stage 03 — Design</span>
+          <h2 class="stage-title">How I design scalable AI systems</h2>
+          <p class="stage-sub">The principles and trade-offs behind every system above — not abstract theory, the actual calls made in production.</p>
+
+          <div class="case-grid">
+            <div class="case-col">
+              <h3>Principles</h3>
+              <ul>
+                <li><strong>Correctness over automation rate.</strong> A system that's wrong silently is worse than one that's honest about its confidence. Every pipeline gets a confidence threshold and a human-review path for the tail — 100% automation is a red flag in domains where errors are costly.</li>
+                <li><strong>Cost is an architecture decision, not a post-launch fix.</strong> Model routing (cheap model for filtering, capable model only where needed) and similarity-based caching are designed in from the start, not bolted on after the first bill.</li>
+                <li><strong>Idempotency at every ingestion boundary.</strong> Anything pulling from an external system will redeliver, retry, or duplicate. Every write is keyed so a replay can't corrupt state.</li>
+                <li><strong>Multi-tenancy is a day-one decision.</strong> Retrofitting tenant isolation after the fact is one of the most expensive mistakes to unwind — decided explicitly, even when the first customer is the only customer.</li>
+              </ul>
+            </div>
+            <div class="case-col">
+              <h3>Trade-offs I weigh explicitly</h3>
+              <ul>
+                <li><strong>Batch vs. real-time.</strong> Real-time isn't always worth the complexity — used where estimators are blocked waiting, batched where staleness costs nothing.</li>
+                <li><strong>LLM vs. rules-based logic.</strong> LLMs for open-ended extraction over unstructured input. Deterministic rules for anything with a known, finite decision space — cheaper, faster, auditable.</li>
+                <li><strong>Single-tenant simplicity vs. multi-tenant complexity.</strong> Ship single-tenant first when there's one customer, but keep the tenant boundary explicit in the data model so the later migration is a scaling exercise, not a rewrite.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="flow-strip">
+            <span class="fs-step">Ingestion (idempotent)</span><span class="fs-arrow">→</span>
+            <span class="fs-step">Normalization / ETL</span><span class="fs-arrow">→</span>
+            <span class="fs-step">Extraction (confidence-scored)</span><span class="fs-arrow">→</span>
+            <span class="fs-step">LLM routing (cheap/capable)</span><span class="fs-arrow">→</span>
+            <span class="fs-step">Validation agent</span><span class="fs-arrow">→</span>
+            <span class="fs-step">Structured output + review queue</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="lab">
     <div class="wrap">
       <div class="stage-row">
         <div class="stage-rail"><div class="stage-node"></div></div>
         <div class="stage-content reveal">
-          <span class="stage-tag">Stage 02 — Lab</span>
+          <span class="stage-tag">Stage 04 — Lab</span>
           <h2 class="stage-title">What I build on the side</h2>
           <p class="stage-sub">Independent tools — RAG pipelines, multi-agent systems, self-contained apps — that double as a testing ground before ideas show up in client work. All verifiable on GitHub.</p>
 
@@ -735,7 +840,7 @@
       <div class="stage-row">
         <div class="stage-rail"><div class="stage-node"></div></div>
         <div class="stage-content reveal">
-          <span class="stage-tag">Stage 03 — Validate</span>
+          <span class="stage-tag">Stage 05 — Validate</span>
           <h2 class="stage-title">Impact, quantified</h2>
           <p class="stage-sub">The numbers I'd actually stand behind in a review — not vanity metrics.</p>
 
@@ -775,7 +880,7 @@
       <div class="stage-row">
         <div class="stage-rail"><div class="stage-node"></div></div>
         <div class="stage-content reveal">
-          <span class="stage-tag">Stage 04 — Tooling</span>
+          <span class="stage-tag">Stage 06 — Tooling</span>
           <h2 class="stage-title">What I build with</h2>
           <p class="stage-sub">The stack behind both the client systems and the lab.</p>
 
@@ -797,6 +902,7 @@
               <div class="stack-group-title">Cloud & Platform</div>
               <div class="chip-list">
                 <span class="tech-chip">Azure DevOps</span>
+                <span class="tech-chip">Kubernetes</span>
                 <span class="tech-chip">AKS</span>
                 <span class="tech-chip">Azure Key Vault</span>
                 <span class="tech-chip">Azure Static Web Apps</span>
@@ -811,7 +917,14 @@
                 <span class="tech-chip">Multi-agent orchestration</span>
                 <span class="tech-chip">Claude / OpenAI / Gemini / Ollama</span>
                 <span class="tech-chip">Claude Computer Use</span>
+              </div>
+            </div>
+            <div>
+              <div class="stack-group-title">Frontend</div>
+              <div class="chip-list">
                 <span class="tech-chip">React / TypeScript</span>
+                <span class="tech-chip">Vite</span>
+                <span class="tech-chip">Tailwind CSS</span>
               </div>
             </div>
           </div>
@@ -825,7 +938,7 @@
       <div class="stage-row">
         <div class="stage-rail"><div class="stage-node"></div></div>
         <div class="stage-content reveal">
-          <span class="stage-tag">Stage 05 — Deploy</span>
+          <span class="stage-tag">Stage 07 — Deploy</span>
           <h2 class="stage-title">Journey</h2>
           <p class="stage-sub">How the last few years have shipped.</p>
 
@@ -862,7 +975,7 @@
       <div class="stage-row">
         <div class="stage-rail"><div class="stage-node"></div></div>
         <div class="stage-content reveal">
-          <span class="stage-tag">Stage 06 — Scale</span>
+          <span class="stage-tag">Stage 08 — Scale</span>
           <h2 class="stage-title">Where this is headed</h2>
           <p class="stage-sub">Currently pursuing an M.Tech in AI/ML (BITS Pilani, WILP, expected Sept 2027) alongside 12 completed learning programs spanning deep learning, LLM evaluation, and applied AI strategy.</p>
 
@@ -887,9 +1000,9 @@
       <div class="stage-row">
         <div class="stage-rail"><div class="stage-node"></div></div>
         <div class="stage-content reveal">
-          <span class="stage-tag">Stage 07 — Share</span>
+          <span class="stage-tag">Stage 09 — Share</span>
           <h2 class="stage-title">Words, in public</h2>
-          <p class="stage-sub">Long-form writing on <a href="https://medium.com/@pranavsinghtomar" target="_blank" rel="noopener" style="color:var(--teal); text-decoration:none; border-bottom:1px solid var(--teal);">Medium</a> — home lab tooling, AI systems, and the lessons that only show up once something's in production.</p>
+          <p class="stage-sub">Long-form writing on <a href="https://medium.com/@pranavsinghtomar" target="_blank" rel="noopener" class="inline-link">Medium</a> — home lab tooling, AI systems, and the lessons that only show up once something's in production.</p>
 
           <div class="tl">
             <div class="tl-item">

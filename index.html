@@ -565,6 +565,27 @@
             </div>
           </div>
 
+          <div class="case-grid">
+            <div class="case-col">
+              <h3>Scaling: 250 → ~1,500 users</h3>
+              <ul>
+                <li><strong>Where it breaks first.</strong> At current volume (~3,000+ RFQs/month across 72 inboxes, estimated), the shared OLTP/OLAP Snowflake workload and a fixed connection pool are the first ceiling — projected to saturate well before 1,500 users if write-heavy dedupe queries keep competing with estimator read traffic on the same warehouse.</li>
+                <li><strong>Fix in progress, not a rewrite.</strong> Decoupling OLTP (transactional writes from ingestion) from OLAP (estimator dashboards, reporting) onto separate warehouses, so a burst of inbound RFQs can't stall someone pulling a report.</li>
+                <li><strong>Identity at 6x the orgs.</strong> Single-org Entra ID setup doesn't hold under multi-org expansion — evaluating shared-schema-with-tenant-isolation vs. siloed-per-org before onboarding the next cohort, since migrating tenancy model after data lands is far more expensive than before.</li>
+                <li><strong>Capacity math, not guesswork.</strong> Peak inbound is bursty (Monday-morning RFQ floods across 72 inboxes) rather than flat — sizing the ingestion queue and LLM-call concurrency limits off p95 burst volume, not average daily volume.</li>
+              </ul>
+            </div>
+            <div class="case-col">
+              <h3>Failure Handling</h3>
+              <ul>
+                <li><strong>Transient API failures.</strong> Graph API 429s and 5xxs: exponential backoff, capped at 3 retries, then the message drops to a dead-letter queue for manual replay instead of silently dropping the RFQ.</li>
+                <li><strong>Partial extraction.</strong> A multi-line-item RFQ where 8 of 10 line items extract cleanly doesn't get discarded or force-completed — the record ships with the 8 confirmed fields and the 2 low-confidence ones flagged for review, rather than blocking the whole RFQ on the worst field.</li>
+                <li><strong>Bad or corrupted PDFs.</strong> Password-protected, scanned-at-an-angle, or malformed attachments fail layout-aware parsing outright. These are quarantined with the original message ID (not deleted) and surfaced to the review queue with a "parse failed" reason, so nothing silently vanishes.</li>
+                <li><strong>LLM output that doesn't fit the schema.</strong> Function-calling output is validated against the expected schema before it's trusted; a malformed or hallucinated field triggers one retry with a stricter, more constrained prompt before falling back to human review — never shipped un-validated.</li>
+              </ul>
+            </div>
+          </div>
+
           <div class="chip-list chip-list-spaced">
             <span class="tech-chip">FastAPI</span>
             <span class="tech-chip">Snowflake</span>
@@ -581,6 +602,8 @@
             <span class="metric-chip">Cache hit rate <b>~65%</b></span>
             <span class="metric-chip">Manual dedupe workload <b>-20–30%</b></span>
             <span class="metric-chip">Customer email back-and-forth <b>-40%</b></span>
+            <span class="metric-chip">Volume <b>~3,000+ RFQs/mo (est.)</b></span>
+            <span class="metric-chip">Retry policy <b>3x backoff → DLQ</b></span>
             <span class="metric-chip">Users <b>250+ live · designing for ~1,500</b></span>
           </div>
         </div>

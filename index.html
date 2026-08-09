@@ -294,6 +294,9 @@
   .case-block p{font-size:14.5px; color:var(--ink-soft); line-height:1.65; max-width:74ch;}
   .case-block p strong{color:var(--ink);}
   .chip-list-spaced{margin-bottom:20px;}
+  .case-study-head{display:flex; align-items:center; gap:12px; margin:0 0 22px;}
+  .case-study-head:not(:first-child){margin-top:56px;}
+  .case-study-title{font-family:var(--disp); font-weight:600; font-size:22px; margin:0;}
 
   /* ---------- LAB (PERSONAL PROJECTS) ---------- */
   .card-link{
@@ -618,34 +621,110 @@
         <div class="stage-content reveal">
           <span class="stage-tag">Stage 02 — Build</span>
           <h2 class="stage-title">Other systems I've built</h2>
-          <p class="stage-sub">Production platforms shipped for enterprise clients, beyond the flagship system above — not prototypes sitting in a repo.</p>
+          <p class="stage-sub">Two more production case studies, beyond the flagship system above — plus a lighter summary of everything else shipped or handed off.</p>
+
+          <div class="case-study-head">
+            <h3 class="case-study-title">Parametric Estimation Platform</h3>
+            <span class="status-pill status-uat">UAT · going live</span>
+          </div>
+
+          <div class="flow-strip">
+            <span class="fs-step">15–16 legacy tools</span><span class="fs-arrow">→</span>
+            <span class="fs-step">Formula extraction</span><span class="fs-arrow">→</span>
+            <span class="fs-step">Versioned Rule Catalog</span><span class="fs-arrow">→</span>
+            <span class="fs-step">14-stage calc engine</span><span class="fs-arrow">→</span>
+            <span class="fs-step">Takeoff generation</span><span class="fs-arrow">→</span>
+            <span class="fs-step">Quote</span>
+          </div>
+
+          <div class="case-block">
+            <h3>Problem</h3>
+            <p>Glazing/facade estimators worked across 15–16 fragmented legacy tools — spreadsheets and standalone calculators, each covering a different stage. 150+ business formulas existed only in institutional memory and manual worksheets, not code. There was no single source of truth: the same window system priced differently depending on which estimator and which tool touched it, across a 14-stage flow with 300+ variables, with no way to trace which formula version priced a given quote.</p>
+          </div>
+
+          <div class="case-block">
+            <h3>Solution</h3>
+            <p>Replaced all 15–16 legacy tools with one calculation engine. Digitized the 150+ formulas into a versioned, auditable Rule Catalog that customers edit directly — no engineering ticket required to change a formula. Deliberately rules-based, not LLM-driven: pricing math is a known, finite decision space where determinism and auditability matter more than flexibility. The full 14-stage pipeline runs against 300+ variables per project, with every calculation traceable to the exact formula version that produced it.</p>
+          </div>
+
+          <div class="case-grid">
+            <div class="case-col">
+              <h3>Challenges</h3>
+              <ul>
+                <li><strong>Extracting formulas from inconsistent legacy tools.</strong> Different tools used different rounding conventions and unit systems for the same calculation. Built a shadow-mode validation harness that ran the new engine against the same historical projects as every legacy tool before any customer cutover, instead of spot-checking.</li>
+                <li><strong>Live-editable formulas vs. issued quotes.</strong> A customer changing a formula mid-cycle can't retroactively alter a quote already sent to their customer. Solved with immutable formula-version snapshots pinned to each quote at creation time.</li>
+                <li><strong>300+ variables per calculation.</strong> Naive re-evaluation of all 14 stages per change was slow. Precomputed shared intermediate values across stages to cut redundant calculation.</li>
+              </ul>
+            </div>
+            <div class="case-col">
+              <h3>Trade-offs</h3>
+              <ul>
+                <li><strong>Rules-based over LLM.</strong> Deterministic and auditable at near-zero marginal cost per calculation, versus an LLM's non-determinism and missing audit trail — wrong fit for pricing math, right fit here.</li>
+                <li><strong>Customer-editable Rule Catalog over engineering-gated changes.</strong> Larger support/QA surface, but removes the estimation team as a bottleneck on every formula tweak.</li>
+                <li><strong>Shadow-mode cutover over big-bang replacement.</strong> Slower rollout, but zero pricing-error incidents at go-live — validated against legacy-tool output first, not after.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card-metrics" style="margin-bottom:56px;">
+            <span class="metric-chip">Legacy tools replaced <b>15–16 → 1</b></span>
+            <span class="metric-chip">Formulas digitized <b>150+</b></span>
+            <span class="metric-chip">Variables/project <b>300+</b></span>
+            <span class="metric-chip">Takeoff success <b>99%</b></span>
+            <span class="metric-chip">Users at go-live <b>50–60</b></span>
+          </div>
+
+          <div class="case-study-head">
+            <h3 class="case-study-title">AI Document Intelligence Platform</h3>
+            <span class="status-pill status-live">2 variants shipped</span>
+          </div>
+
+          <div class="flow-strip">
+            <span class="fs-step">Document ingest</span><span class="fs-arrow">→</span>
+            <span class="fs-step">Chunking</span><span class="fs-arrow">→</span>
+            <span class="fs-step">Embedding (Qdrant)</span><span class="fs-arrow">→</span>
+            <span class="fs-step">Relationship graph</span><span class="fs-arrow">→</span>
+            <span class="fs-step">Hybrid retrieval</span><span class="fs-arrow">→</span>
+            <span class="fs-step">Tenant-scoped chatbot</span>
+          </div>
+
+          <div class="case-block">
+            <h3>Problem</h3>
+            <p>Enterprise clients needed Q&amp;A over large internal document corpora — specs, contracts, manuals — without one tenant's documents ever surfacing to another. Flat vector search alone missed multi-hop questions ("which vendor spec supersedes which addendum") that need relationship context between documents, not just similarity.</p>
+          </div>
+
+          <div class="case-block">
+            <h3>Solution</h3>
+            <p>Shipped two variants — a client-specific deployment and a generalized multi-tenant platform — both backed by semantic search over Qdrant plus a Graph-RAG layer that captures document relationships (supersedes, references, amends) alongside embeddings. Retrieval is hybrid: vector similarity plus graph traversal, feeding an LLM chatbot grounded on the retrieved context. The multi-tenant backend enforces isolation at query time, not as a post-hoc filter.</p>
+          </div>
+
+          <div class="case-grid">
+            <div class="case-col">
+              <h3>Challenges</h3>
+              <ul>
+                <li><strong>Multi-hop questions plain vector search misses.</strong> Answers needing 2–3 document hops (spec → addendum → contract) don't surface from similarity alone. Layered graph traversal on top of vector retrieval instead of relying on either alone.</li>
+                <li><strong>Tenant isolation under shared infrastructure.</strong> Query-time tenant scoping is enforced before retrieval runs, not filtered from results afterward — a scoping bug can't leak cross-tenant chunks by construction.</li>
+                <li><strong>Generalizing without a rewrite.</strong> Kept the tenant boundary explicit in the data model from the first, client-specific build, so going multi-tenant later was a scaling exercise, not a redesign.</li>
+              </ul>
+            </div>
+            <div class="case-col">
+              <h3>Trade-offs</h3>
+              <ul>
+                <li><strong>Graph-RAG over flat RAG.</strong> Added retrieval latency and graph-maintenance cost, but flat vector search was measurably missing multi-hop answers in evaluation — worth the overhead.</li>
+                <li><strong>Client-specific first, generalize second.</strong> Shipped narrow scope to one client fast rather than building multi-tenancy speculatively before a second tenant existed to validate it against.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card-metrics" style="margin-bottom:56px;">
+            <span class="metric-chip">Variants shipped <b>2</b></span>
+            <span class="metric-chip">Retrieval <b>Graph-RAG + vector hybrid</b></span>
+            <span class="metric-chip">Tenant isolation <b>query-time</b></span>
+          </div>
+
+          <p class="stage-sub" style="margin-bottom:20px;">Everything else shipped or handed off this cycle — smaller in scope, still real production or client-facing outcomes.</p>
 
           <div class="cards">
-
-            <div class="card">
-              <div class="card-top">
-                <h3 class="card-title">Parametric Estimation Platform</h3>
-                <span class="status-pill status-uat">UAT · going live</span>
-              </div>
-              <p class="card-desc">Parametric glazing estimation platform. Replaced 15–16 fragmented legacy estimation tools with one unified calculation engine, and digitized 150+ business formulas, 14 stages, and 300+ variables into an auditable Rule Catalog customers manage directly.</p>
-              <div class="card-metrics">
-                <span class="metric-chip">Formulas digitized <b>150+</b></span>
-                <span class="metric-chip">Takeoff engine <b>99% success</b></span>
-                <span class="metric-chip">Est. users <b>50–60</b></span>
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="card-top">
-                <h3 class="card-title">AI Document Intelligence Platform</h3>
-                <span class="status-pill status-live">2 variants shipped</span>
-              </div>
-              <p class="card-desc">Client-specific and generalized multi-tenant AI document intelligence systems — semantic search over vector databases, Graph-RAG retrieval pipelines, and an LLM chatbot for document Q&A, backed by multi-tenant backend services.</p>
-              <div class="card-metrics">
-                <span class="metric-chip">Graph-RAG retrieval</span>
-                <span class="metric-chip">Multi-tenant architecture</span>
-              </div>
-            </div>
 
             <div class="card">
               <div class="card-top">
@@ -825,24 +904,6 @@
             </div>
 
             <div class="lab-item">
-              <div class="lab-item-top"><span class="lab-item-title">WebRTC Direct</span></div>
-              <p class="lab-item-desc">Minimal single-file peer-to-peer video calling demo — no signaling server dependency beyond what's built in.</p>
-              <a class="card-link" href="https://github.com/Pranav-Shivam/VideoCall-WebRTC" target="_blank" rel="noopener">View repo →</a>
-            </div>
-
-            <div class="lab-item">
-              <div class="lab-item-top"><span class="lab-item-title">Modern Audio Player</span></div>
-              <p class="lab-item-desc">React 19 audio player with drag-and-drop upload, playback speed control, and full ARIA/keyboard accessibility.</p>
-              <a class="card-link" href="https://github.com/Pranav-Shivam/AudioPlayer" target="_blank" rel="noopener">View repo →</a>
-            </div>
-
-            <div class="lab-item">
-              <div class="lab-item-top"><span class="lab-item-title">Local Speech-to-Text</span></div>
-              <p class="lab-item-desc">Minimal FastAPI + Ollama service for local, offline speech interaction.</p>
-              <a class="card-link" href="https://github.com/Pranav-Shivam/speech-to-text" target="_blank" rel="noopener">View repo →</a>
-            </div>
-
-            <div class="lab-item">
               <div class="lab-item-top">
                 <span class="lab-item-title">MD2PDF</span>
                 <span class="lab-live">Live demo ↗</span>
@@ -853,6 +914,7 @@
             </div>
 
           </div>
+          <p class="cert-note">// also shipped: WebRTC video calling demo, a React audio player, a local speech-to-text service</p>
         </div>
       </div>
     </div>

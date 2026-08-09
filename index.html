@@ -142,8 +142,10 @@
       display:flex; flex-direction:column; gap:2px;
       position:absolute; top:100%; left:0; right:0;
       background:var(--paper); border-bottom:1px solid var(--line);
-      padding:8px 28px 18px; max-height:0; overflow:hidden;
-      transition:max-height .25s ease;
+      /* padding stays 0 while closed — with box-sizing:border-box, max-height:0 collapses
+         the content box but padding would still render as a visible sliver of the menu */
+      padding:0 28px; max-height:0; overflow:hidden;
+      transition:max-height .25s ease, padding .25s ease;
     }
     .navlinks.open{max-height:340px; padding:14px 28px 20px;}
     .navlinks a{padding:10px 0; border-bottom:1px solid var(--line);}
@@ -383,6 +385,52 @@
   .goal-card p{font-size:14.5px; color:var(--ink-soft); margin:0;}
   .cert-note{margin-top:24px; font-size:13.5px; color:var(--ink-soft); font-family:var(--mono);}
 
+  /* ---------- PROGRESSIVE DISCLOSURE ---------- */
+  .case-summary{
+    font-size:15.5px; color:var(--ink-soft); line-height:1.65;
+    max-width:72ch; margin:0 0 16px;
+  }
+  .case-summary strong{color:var(--ink); font-weight:600;}
+  .disclosure{
+    border:1px solid var(--line); border-radius:var(--radius); background:var(--surface);
+    margin:0 0 18px; transition:border-color .15s ease, background-color .35s ease;
+  }
+  .disclosure:hover{border-color:var(--teal);}
+  .card-metrics + .disclosure, .chip-list + .disclosure{margin-top:22px;}
+  .disclosure > summary{
+    list-style:none; cursor:pointer; padding:15px 20px;
+    display:flex; align-items:center; gap:12px;
+    font-family:var(--mono); font-size:11.5px; text-transform:uppercase; letter-spacing:0.07em;
+    color:var(--ink-soft); transition:color .15s ease;
+    white-space:nowrap; /* label must never wrap — only .disc-hint is allowed to clip */
+  }
+  .disclosure > summary::-webkit-details-marker{display:none;}
+  .disclosure > summary::marker{content:'';}
+  .disclosure > summary:hover{color:var(--teal);}
+  .disclosure > summary:focus-visible{outline:2px solid var(--teal); outline-offset:-2px; border-radius:var(--radius);}
+  .disclosure > summary::after{
+    content:''; margin-left:auto; flex:none;
+    width:7px; height:7px; border-right:1.5px solid currentColor; border-bottom:1.5px solid currentColor;
+    transform:rotate(45deg) translate(-2px,-2px); transition:transform .2s ease;
+  }
+  .disclosure[open] > summary{color:var(--ink); border-bottom:1px solid var(--line);}
+  .disclosure[open] > summary::after{transform:rotate(-135deg) translate(-2px,-2px);}
+  .disc-hint{
+    font-family:var(--mono); font-size:11px; text-transform:none; letter-spacing:0;
+    color:var(--ink-soft); opacity:.8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    flex:0 1 auto; min-width:0; /* min-width:0 lets it actually shrink inside the flex row */
+  }
+  @media(max-width:600px){ .disc-hint{display:none;} }
+  .disclosure-body{padding:24px 20px 6px;}
+  .disclosure-body > .case-grid:last-child,
+  .disclosure-body > .case-block:last-child{margin-bottom:18px;}
+  @media(prefers-reduced-motion:no-preference){
+    .disclosure[open] .disclosure-body{animation:discIn .28s ease;}
+  }
+  @keyframes discIn{from{opacity:0; transform:translateY(-4px);} to{opacity:1; transform:none;}}
+  /* nested one level deeper — visually recessed so hierarchy stays readable */
+  .disclosure .disclosure{background:var(--paper-alt);}
+
   /* ---------- CONTACT / FOOTER ---------- */
   footer{
     background:var(--panel); color:var(--panel-fg); padding:72px 0 40px; border-top:1px solid var(--panel-line);
@@ -411,6 +459,7 @@
 
   a:focus-visible, button:focus-visible{outline:2px solid var(--teal); outline-offset:2px;}
 </style>
+<noscript><style>.reveal{opacity:1; transform:none;}</style></noscript>
 </head>
 <body>
 
@@ -537,6 +586,10 @@
             <span class="fs-step">Structured output</span>
           </div>
 
+          <details class="disclosure">
+            <summary>Read the full case study <span class="disc-hint">problem · solution · challenges · trade-offs · scaling</span></summary>
+            <div class="disclosure-body">
+
           <div class="case-block">
             <h3>Problem</h3>
             <p>An enterprise distributor received RFQs as unstructured email attachments — PDFs, scanned specs, spreadsheets — across dozens of regional inboxes. Estimators read each document by hand, extracted material specs, cross-checked for duplicate quote codes, and re-keyed data into the quoting system. Baseline: ~10% of RFQs cleared without manual intervention; the rest cost an estimator 15–30 minutes each, with re-keying errors propagating straight into customer-facing quotes.</p>
@@ -563,7 +616,7 @@
                 <li><strong>Human-in-the-loop over full automation.</strong> A wrong material spec in a customer quote is expensive to unwind. Traded a few points of automation rate for correctness — 85% automated, 15% to review, instead of forcing 100%.</li>
                 <li><strong>Caching over always-fresh extraction.</strong> Re-running LLM extraction on every RFQ regardless of similarity is simpler, but slower and costlier. Cached against a similarity threshold, accepting cache-invalidation complexity for the latency/cost win.</li>
                 <li><strong>Splitting OLTP (transactional writes) from OLAP (analytics/reporting), not patching around it.</strong> One Snowflake workload was the right call to ship fast early. Multi-org expansion is now driving write volume past that coupling's ceiling — decoupling it, not working around it.</li>
-                <li><strong>Designing multi-tenancy for a 6x larger user base, not the current one.</strong> The single-org identity model doesn't hold under multi-org expansion. Evaluating shared-schema-with-isolation vs. siloed-per-org before committing, since the wrong call is expensive to reverse once more orgs are onboarded.</li>
+                <li><strong>Designing multi-tenancy for a 6x larger user base, not the current one.</strong> Identity now runs on Okta OIDC, which carries the multi-org model; the open call is the data-tenancy boundary. Evaluating shared-schema-with-isolation vs. siloed-per-org before committing, since the wrong call is expensive to reverse once more orgs are onboarded.</li>
               </ul>
             </div>
           </div>
@@ -574,7 +627,7 @@
               <ul>
                 <li><strong>Where it breaks first.</strong> At current volume (thousands of inbound emails a day across dozens of inboxes, hundreds of thousands of RFQs processed to date), the shared OLTP/OLAP Snowflake workload and a fixed connection pool are the first ceiling — projected to saturate well before it can carry thousands of concurrent users if write-heavy dedupe queries keep competing with estimator read traffic on the same warehouse.</li>
                 <li><strong>Fix in progress, not a rewrite.</strong> Decoupling OLTP from OLAP onto separate warehouses — ingestion writes on one, estimator dashboards and reporting on the other — so a burst of inbound RFQs can't stall someone pulling a report.</li>
-                <li><strong>Identity at 6x the orgs.</strong> Single-org Entra ID setup doesn't hold under multi-org expansion — evaluating shared-schema-with-tenant-isolation vs. siloed-per-org before onboarding the next cohort, since migrating tenancy model after data lands is far more expensive than before.</li>
+                <li><strong>Identity at 6x the orgs.</strong> The original single-org Entra ID setup wouldn't hold under multi-org expansion, so identity was migrated onto Okta OIDC ahead of the growth rather than during it. What's still open is the data-tenancy boundary — shared-schema-with-tenant-isolation vs. siloed-per-org — being settled before the next cohort onboards, since migrating tenancy model after data lands is far more expensive than before.</li>
                 <li><strong>Capacity math, not guesswork.</strong> Peak inbound is bursty (Monday-morning RFQ floods across every inbox) rather than flat — sizing the ingestion queue and LLM-call concurrency limits off p95 burst volume, not average daily volume.</li>
               </ul>
             </div>
@@ -589,6 +642,9 @@
             </div>
           </div>
 
+            </div>
+          </details>
+
           <div class="chip-list chip-list-spaced">
             <span class="tech-chip">FastAPI</span>
             <span class="tech-chip">Snowflake</span>
@@ -596,7 +652,7 @@
             <span class="tech-chip">Microsoft Graph API</span>
             <span class="tech-chip">Azure OpenAI</span>
             <span class="tech-chip">Azure Static Web Apps</span>
-            <span class="tech-chip">Entra ID</span>
+            <span class="tech-chip">Okta OIDC</span>
           </div>
 
           <div class="card-metrics">
@@ -610,10 +666,9 @@
             <span class="metric-chip">Scale <b>live in production · designed for 6x growth</b></span>
           </div>
 
-          <div class="case-study-head">
-            <h3 class="case-study-title">Agent Deep Dive: Snowflake Sync Agent</h3>
-            <span class="status-pill status-live">Databricks · production</span>
-          </div>
+          <details class="disclosure">
+            <summary>Agent deep dive — Snowflake Sync Agent <span class="disc-hint">Databricks · ledger state machine · concurrency locking</span></summary>
+            <div class="disclosure-body">
 
           <div class="flow-strip">
             <span class="fs-step">Runtime guard</span><span class="fs-arrow">→</span>
@@ -625,7 +680,8 @@
           </div>
 
           <div class="case-block">
-            <p><strong>What it does.</strong> A Databricks-notebook pipeline that pulls new or updated email conversations out of the raw ingestion tables and turns each one into a quote record, with a persistent processing ledger tracking every conversation through new → in-progress → processed (or failed/partial) rather than treating each run as fire-and-forget. Each batch run locks its conversations, resolves the customer, region, and sales rep behind each one, and upserts the quote via a single conditional MERGE — never running two overlapping passes on the same data.</p>
+            <h3>What it does</h3>
+            <p>A Databricks-notebook pipeline that pulls new or updated email conversations out of the raw ingestion tables and turns each one into a quote record, with a persistent processing ledger tracking every conversation through new → in-progress → processed (or failed/partial) rather than treating each run as fire-and-forget. Each batch run locks its conversations, resolves the customer, region, and sales rep behind each one, and upserts the quote via a single conditional MERGE — never running two overlapping passes on the same data.</p>
           </div>
 
           <div class="case-grid">
@@ -658,17 +714,18 @@
             <span class="tech-chip">loguru</span>
           </div>
 
-          <div class="card-metrics" style="margin-bottom:56px;">
+          <div class="card-metrics" style="margin-bottom:18px;">
             <span class="metric-chip">Ledger states <b>5 (queued → in-progress → terminal)</b></span>
             <span class="metric-chip">Retry limit <b>3 attempts</b></span>
             <span class="metric-chip">Stale-lock recovery <b>timeout sweep → retry</b></span>
             <span class="metric-chip">Customer match <b>tuned similarity threshold</b></span>
           </div>
+            </div>
+          </details>
 
-          <div class="case-study-head">
-            <h3 class="case-study-title">Agent Deep Dive: Material Specification Agent</h3>
-            <span class="status-pill status-live">Azure OpenAI · production</span>
-          </div>
+          <details class="disclosure">
+            <summary>Agent deep dive — Material Specification Agent <span class="disc-hint">Azure OpenAI · hybrid vision extraction · merge &amp; dedupe</span></summary>
+            <div class="disclosure-body">
 
           <div class="flow-strip">
             <span class="fs-step">Complexity pre-filter</span><span class="fs-arrow">→</span>
@@ -681,7 +738,8 @@
           </div>
 
           <div class="case-block">
-            <p><strong>What it does.</strong> Extracts structured product specifications out of RFQ attachments — scanned spec sheets, hand-marked drawings, Excel takeoffs, Word docs — and out of the email body itself, merges every source into one deduplicated set of specs per quote, and flags exactly which required fields are still missing before the quote can proceed.</p>
+            <h3>What it does</h3>
+            <p>Extracts structured product specifications out of RFQ attachments — scanned spec sheets, hand-marked drawings, Excel takeoffs, Word docs — and out of the email body itself, merges every source into one deduplicated set of specs per quote, and flags exactly which required fields are still missing before the quote can proceed.</p>
           </div>
 
           <div class="case-grid">
@@ -717,12 +775,14 @@
             <span class="tech-chip">tiktoken</span>
           </div>
 
-          <div class="card-metrics" style="margin-bottom:56px;">
+          <div class="card-metrics" style="margin-bottom:18px;">
             <span class="metric-chip">Complexity pre-filters <b>size · pages · rows/sheets</b></span>
             <span class="metric-chip">Prompt token savings (single product group) <b>~50%</b></span>
             <span class="metric-chip">Required fields <b>5, hard-gated</b></span>
             <span class="metric-chip">Normalization safety net <b>strict array-length validation</b></span>
           </div>
+            </div>
+          </details>
         </div>
       </div>
     </div>
@@ -735,12 +795,14 @@
         <div class="stage-content reveal">
           <span class="stage-tag">Stage 02 — Build</span>
           <h2 class="stage-title">Other systems I've built</h2>
-          <p class="stage-sub">Two more production case studies, beyond the flagship system above — plus a lighter summary of everything else shipped or handed off.</p>
+          <p class="stage-sub">Four more production case studies, beyond the flagship system above — each collapsed to a summary, expandable for the full write-up — plus a lighter list of everything else shipped or handed off.</p>
 
           <div class="case-study-head">
             <h3 class="case-study-title">Parametric Estimation Platform</h3>
             <span class="status-pill status-live">Live · scaled in production</span>
           </div>
+
+          <p class="case-summary">Replaced 15–16 fragmented legacy estimating tools with <strong>one deterministic calculation engine</strong>, and moved 150+ formulas that lived only in institutional memory into a versioned, customer-editable Rule Catalog. Shipped by shadow-mode cutover against the legacy tools — zero pricing incidents at go-live.</p>
 
           <div class="flow-strip">
             <span class="fs-step">15–16 legacy tools</span><span class="fs-arrow">→</span>
@@ -750,6 +812,10 @@
             <span class="fs-step">Takeoff generation</span><span class="fs-arrow">→</span>
             <span class="fs-step">Quote</span>
           </div>
+
+          <details class="disclosure">
+            <summary>Read the full case study <span class="disc-hint">problem · solution · challenges · trade-offs</span></summary>
+            <div class="disclosure-body">
 
           <div class="case-block">
             <h3>Problem</h3>
@@ -782,6 +848,9 @@
             </div>
           </div>
 
+            </div>
+          </details>
+
           <div class="card-metrics" style="margin-bottom:56px;">
             <span class="metric-chip">Legacy tools replaced <b>15–16 → 1</b></span>
             <span class="metric-chip">Formulas digitized <b>150+</b></span>
@@ -797,6 +866,8 @@
             <span class="status-pill status-live">2 variants shipped</span>
           </div>
 
+          <p class="case-summary">Tenant-isolated Q&amp;A over large enterprise document corpora, where <strong>Graph-RAG runs alongside vector search</strong> so multi-hop questions — which spec supersedes which addendum — actually resolve. Shipped client-specific first, then generalized to multi-tenant without a redesign.</p>
+
           <div class="flow-strip">
             <span class="fs-step">Document ingest</span><span class="fs-arrow">→</span>
             <span class="fs-step">Chunking</span><span class="fs-arrow">→</span>
@@ -805,6 +876,10 @@
             <span class="fs-step">Hybrid retrieval</span><span class="fs-arrow">→</span>
             <span class="fs-step">Tenant-scoped chatbot</span>
           </div>
+
+          <details class="disclosure">
+            <summary>Read the full case study <span class="disc-hint">problem · solution · challenges · trade-offs</span></summary>
+            <div class="disclosure-body">
 
           <div class="case-block">
             <h3>Problem</h3>
@@ -834,6 +909,9 @@
             </div>
           </div>
 
+            </div>
+          </details>
+
           <div class="card-metrics" style="margin-bottom:56px;">
             <span class="metric-chip">Variants shipped <b>2</b></span>
             <span class="metric-chip">Retrieval <b>Graph-RAG + vector hybrid</b></span>
@@ -845,6 +923,8 @@
             <span class="status-pill status-live">POC → follow-on project</span>
           </div>
 
+          <p class="case-summary">Turns procedure PDFs and screen recordings straight into <strong>executed pass/fail test results</strong> — no manual test-writing step. LLM step extraction, a source-span validation gate against hallucination, then execution against the live app via Claude Computer Use, with a screenshot trace behind every verdict.</p>
+
           <div class="flow-strip">
             <span class="fs-step">PDF / video docs</span><span class="fs-arrow">→</span>
             <span class="fs-step">Parsing + OCR/ASR</span><span class="fs-arrow">→</span>
@@ -855,6 +935,10 @@
             <span class="fs-step">Claude Computer Use execution</span><span class="fs-arrow">→</span>
             <span class="fs-step">Pass/fail + trace</span>
           </div>
+
+          <details class="disclosure">
+            <summary>Read the full case study <span class="disc-hint">problem · solution · trade-offs · failure · scaling</span></summary>
+            <div class="disclosure-body">
 
           <div class="case-block">
             <h3>Problem</h3>
@@ -928,6 +1012,9 @@
             </div>
           </div>
 
+            </div>
+          </details>
+
           <div class="chip-list chip-list-spaced">
             <span class="tech-chip">PDF/DOCX + video parsing</span>
             <span class="tech-chip">Two-tier LLM routing</span>
@@ -950,6 +1037,8 @@
             <span class="status-pill status-live">Live · production</span>
           </div>
 
+          <p class="case-summary">Owned the auth layer end to end on a live quoting platform: migrated Entra ID → Okta OIDC, put Redis in front of hot-path reads, and moved RBAC checks onto pre-materialized Snowflake Dynamic Tables — <strong>10–15x login latency improvement</strong>, plus multi-cluster warehouse isolation to break a fixed concurrency ceiling.</p>
+
           <div class="flow-strip">
             <span class="fs-step">Entra ID</span><span class="fs-arrow">→</span>
             <span class="fs-step">Okta OIDC migration</span><span class="fs-arrow">→</span>
@@ -958,12 +1047,18 @@
             <span class="fs-step">Multi-cluster warehouse</span>
           </div>
 
+          <details class="disclosure">
+            <summary>Read the full case study <span class="disc-hint">problem · solution · challenges · trade-offs</span></summary>
+            <div class="disclosure-body">
+
           <div class="case-block">
-            <p><strong>Problem.</strong> The same distributor's quoting platform ran its identity layer on Azure Entra ID, coupled directly to the login and permission-check path — every RBAC lookup hit Snowflake live, no cache in between. As usage grew, login latency degraded, and the warehouse had no isolation between read-heavy dashboard traffic and write-heavy ingestion, so the two competed for the same compute.</p>
+            <h3>Problem</h3>
+            <p>The same distributor's quoting platform ran its identity layer on Azure Entra ID, coupled directly to the login and permission-check path — every RBAC lookup hit Snowflake live, no cache in between. As usage grew, login latency degraded, and the warehouse had no isolation between read-heavy dashboard traffic and write-heavy ingestion, so the two competed for the same compute.</p>
           </div>
 
           <div class="case-block">
-            <p><strong>Solution.</strong> Owned the auth layer end to end: migrated off Entra ID onto Okta OIDC, redesigning the identity/session model rather than patching the old provider. Added a Redis caching layer (Azure Managed Redis) in front of hot-path reads, and moved RBAC permission checks onto Snowflake Dynamic Tables — pre-materialized, incrementally refreshed views instead of live permission queries on every login.</p>
+            <h3>Solution</h3>
+            <p>Owned the auth layer end to end: migrated off Entra ID onto Okta OIDC, redesigning the identity/session model rather than patching the old provider. Added a Redis caching layer (Azure Managed Redis) in front of hot-path reads, and moved RBAC permission checks onto Snowflake Dynamic Tables — pre-materialized, incrementally refreshed views instead of live permission queries on every login.</p>
           </div>
 
           <div class="case-grid">
@@ -986,6 +1081,9 @@
               </ul>
             </div>
           </div>
+
+            </div>
+          </details>
 
           <div class="chip-list chip-list-spaced">
             <span class="tech-chip">Azure Managed Redis</span>
@@ -1056,6 +1154,10 @@
           <h2 class="stage-title">How I design scalable AI systems</h2>
           <p class="stage-sub">The principles and trade-offs behind every system above — not abstract theory, the actual calls made in production.</p>
 
+          <details class="disclosure">
+            <summary>Principles &amp; trade-offs I weigh <span class="disc-hint">correctness over automation · cost as architecture · idempotency · multi-tenancy on day one</span></summary>
+            <div class="disclosure-body">
+
           <div class="case-grid">
             <div class="case-col">
               <h3>Principles</h3>
@@ -1075,6 +1177,9 @@
               </ul>
             </div>
           </div>
+
+            </div>
+          </details>
 
           <div class="flow-strip">
             <span class="fs-step">Ingestion (idempotent)</span><span class="fs-arrow">→</span>
@@ -1154,7 +1259,9 @@
 
           </div>
 
-          <div class="lab-more-title">More from the lab</div>
+          <details class="disclosure" style="margin-top:32px;">
+            <summary>7 more from the lab <span class="disc-hint">ChatPersona · Multi-tts · chunking · HyDE · Chrome extension · YouTube · MD2PDF</span></summary>
+            <div class="disclosure-body">
           <div class="lab-more">
 
             <div class="lab-item">
@@ -1205,6 +1312,8 @@
             </div>
 
           </div>
+            </div>
+          </details>
           <p class="cert-note">// also shipped: WebRTC video calling demo, a React audio player, a local speech-to-text service</p>
         </div>
       </div>
@@ -1421,6 +1530,12 @@
                 <a class="write-link" href="https://medium.com/@pranavsinghtomar/the-app-that-puts-a-million-gamers-in-the-same-room-every-night-without-crashing-08acf8233e93" target="_blank" rel="noopener">Read on Medium →</a>
               </div>
             </div>
+          </div>
+
+          <details class="disclosure" style="margin-top:20px;">
+            <summary>6 more posts <span class="disc-hint">May 17 → Mar 15</span></summary>
+            <div class="disclosure-body">
+              <div class="tl">
             <div class="tl-item">
               <div class="tl-date">May 17</div>
               <div>
@@ -1470,6 +1585,8 @@
               </div>
             </div>
           </div>
+            </div>
+          </details>
         </div>
       </div>
     </div>
@@ -1561,7 +1678,7 @@
           io.unobserve(e.target);
         }
       });
-    }, { threshold: 0.12 });
+    }, { threshold: 0, rootMargin: '0px 0px -8% 0px' });
     revealEls.forEach(function(el){ io.observe(el); });
   } else {
     revealEls.forEach(function(el){ el.classList.add('in'); });

@@ -524,7 +524,7 @@
         <div class="stage-content reveal">
           <span class="stage-tag">Stage 01 — Flagship</span>
           <h2 class="stage-title">LLM-Based RFQ Extraction &amp; Processing System</h2>
-          <p class="stage-sub">The system I'd walk through in a system-design interview. Turns unstructured RFQ emails across 72 inboxes into validated, quote-ready data — with the retry logic, caching, and human-review fallback that make it trustworthy in production, not just a demo.</p>
+          <p class="stage-sub">The system I'd walk through in a system-design interview. Turns unstructured RFQ emails across 72 inboxes into validated, quote-ready data — with the retry logic, caching, and human-review fallback that make it trustworthy in production, not a demo.</p>
 
           <div class="flow-strip">
             <span class="fs-step">Email (72 inboxes)</span><span class="fs-arrow">→</span>
@@ -539,12 +539,12 @@
 
           <div class="case-block">
             <h3>Problem</h3>
-            <p>An enterprise construction-materials distributor received RFQs as unstructured email attachments — PDFs, scanned specs, spreadsheets — across 72 regional inboxes. Estimators manually read each document, extracted material specs, cross-checked for duplicate quote codes, and re-keyed data into the quoting system. At baseline, only ~10% of RFQs cleared without manual intervention; the rest cost an estimator 15–30 minutes each, and manual re-keying errors propagated straight into customer-facing quotes.</p>
+            <p>An enterprise construction-materials distributor received RFQs as unstructured email attachments — PDFs, scanned specs, spreadsheets — across 72 regional inboxes. Estimators read each document by hand, extracted material specs, cross-checked for duplicate quote codes, and re-keyed data into the quoting system. Baseline: ~10% of RFQs cleared without manual intervention; the rest cost an estimator 15–30 minutes each, with re-keying errors propagating straight into customer-facing quotes.</p>
           </div>
 
           <div class="case-block">
             <h3>Solution</h3>
-            <p>Built an ingestion-to-structured-output pipeline that needs no human touch for the majority of RFQs. Three production agents run it: a <strong>Snowflake Sync Agent</strong> normalizing intake across all 72 inboxes, a <strong>Dedupe Agent</strong> using multi-algorithm scoring to flag duplicate quote codes before they reach an estimator, and a <strong>Material Specification Agent</strong> extracting and validating spec data against the product catalog. A fourth, the <strong>Missing Info Agent</strong>, proactively emails the customer when required fields are absent instead of leaving the RFQ stuck in a queue. Automation rate: 10% → 85%.</p>
+            <p>An ingestion-to-structured-output pipeline that needs no human touch for most RFQs, run by four production agents: a <strong>Snowflake Sync Agent</strong> normalizing intake across all 72 inboxes, a <strong>Dedupe Agent</strong> using multi-algorithm scoring to flag duplicate quote codes before they reach an estimator, a <strong>Material Specification Agent</strong> extracting and validating spec data against the product catalog, and a <strong>Missing Info Agent</strong> that proactively emails the customer for missing fields instead of leaving the RFQ stuck in a queue. Automation rate: 10% → 85%.</p>
           </div>
 
           <div class="case-grid">
@@ -553,7 +553,7 @@
               <ul>
                 <li><strong>Ingestion at scale.</strong> 72 inboxes on Graph API guarantees rate limits and dropped webhooks. Handled with delta-query polling as a fallback, exponential backoff on 429s, and idempotent writes keyed on message ID — a redelivered webhook can't create a duplicate record.</li>
                 <li><strong>Inconsistent PDF quality.</strong> Scanned documents and specs embedded in free text break naive extraction. Layout-aware parsing plus a per-field confidence score; anything below threshold routes to human review instead of shipping a wrong spec into a quote.</li>
-                <li><strong>Cost and latency at inbox scale.</strong> Full extraction on every attachment across 72 inboxes gets expensive fast. A caching layer (~65% hit rate — many RFQs reuse near-identical spec templates from repeat customers) plus two-tier model routing (cheap pass for classification/dedupe pre-filter, full model only when needed) cut end-to-end latency ~65%.</li>
+                <li><strong>Cost and latency at inbox scale.</strong> Full extraction on every attachment across 72 inboxes compounds fast. A caching layer (~65% hit rate — many RFQs reuse near-identical spec templates from repeat customers) plus two-tier model routing (cheap pass for classification/dedupe pre-filter, full model only when needed) cut end-to-end latency ~65%.</li>
                 <li><strong>Duplicate detection isn't one rule.</strong> Quote codes resurface with formatting differences, revision numbers, or via different inboxes. Multi-algorithm scoring, not a single string match, cut manual cross-check workload 20–30%.</li>
               </ul>
             </div>
@@ -561,8 +561,8 @@
               <h3>Decisions &amp; Trade-offs</h3>
               <ul>
                 <li><strong>Human-in-the-loop over full automation.</strong> A wrong material spec in a customer quote is expensive to unwind. Traded a few points of automation rate for correctness — 85% automated, 15% to review, instead of forcing 100%.</li>
-                <li><strong>Caching over always-fresh extraction.</strong> Re-running LLM extraction on every RFQ regardless of similarity is simpler but slower and costlier. Cached against a similarity threshold, accepting cache-invalidation complexity for the latency/cost win.</li>
-                <li><strong>Splitting OLTP/OLAP, not patching around it.</strong> One Snowflake workload was the right call to ship fast early. As multi-org expansion increases write volume, that coupling now bottlenecks — currently decoupling rather than working around it.</li>
+                <li><strong>Caching over always-fresh extraction.</strong> Re-running LLM extraction on every RFQ regardless of similarity is simpler, but slower and costlier. Cached against a similarity threshold, accepting cache-invalidation complexity for the latency/cost win.</li>
+                <li><strong>Splitting OLTP (transactional writes) from OLAP (analytics/reporting), not patching around it.</strong> One Snowflake workload was the right call to ship fast early. Multi-org expansion is now driving write volume past that coupling's ceiling — decoupling it, not working around it.</li>
                 <li><strong>Designing multi-tenancy for ~1,500 users, not the current 250.</strong> The single-org identity model doesn't hold under multi-org expansion. Evaluating shared-schema-with-isolation vs. siloed-per-org before committing, since the wrong call is expensive to reverse once more orgs are onboarded.</li>
               </ul>
             </div>
@@ -573,7 +573,7 @@
               <h3>Scaling: 250 → ~1,500 users</h3>
               <ul>
                 <li><strong>Where it breaks first.</strong> At current volume (~3,000+ RFQs/month across 72 inboxes, estimated), the shared OLTP/OLAP Snowflake workload and a fixed connection pool are the first ceiling — projected to saturate well before 1,500 users if write-heavy dedupe queries keep competing with estimator read traffic on the same warehouse.</li>
-                <li><strong>Fix in progress, not a rewrite.</strong> Decoupling OLTP (transactional writes from ingestion) from OLAP (estimator dashboards, reporting) onto separate warehouses, so a burst of inbound RFQs can't stall someone pulling a report.</li>
+                <li><strong>Fix in progress, not a rewrite.</strong> Decoupling OLTP from OLAP onto separate warehouses — ingestion writes on one, estimator dashboards and reporting on the other — so a burst of inbound RFQs can't stall someone pulling a report.</li>
                 <li><strong>Identity at 6x the orgs.</strong> Single-org Entra ID setup doesn't hold under multi-org expansion — evaluating shared-schema-with-tenant-isolation vs. siloed-per-org before onboarding the next cohort, since migrating tenancy model after data lands is far more expensive than before.</li>
                 <li><strong>Capacity math, not guesswork.</strong> Peak inbound is bursty (Monday-morning RFQ floods across 72 inboxes) rather than flat — sizing the ingestion queue and LLM-call concurrency limits off p95 burst volume, not average daily volume.</li>
               </ul>
@@ -639,12 +639,12 @@
 
           <div class="case-block">
             <h3>Problem</h3>
-            <p>Glazing/facade estimators worked across 15–16 fragmented legacy tools — spreadsheets and standalone calculators, each covering a different stage. 150+ business formulas existed only in institutional memory and manual worksheets, not code. There was no single source of truth: the same window system priced differently depending on which estimator and which tool touched it, across a 14-stage flow with 300+ variables, with no way to trace which formula version priced a given quote.</p>
+            <p>Glazing/facade estimators worked across 15–16 fragmented legacy tools — spreadsheets and standalone calculators, each covering a different stage. 150+ business formulas existed only in institutional memory and manual worksheets, not code. No single source of truth: the same window system priced differently depending on which estimator and tool touched it, across a 14-stage flow with 300+ variables — and no way to trace which formula version priced a given quote.</p>
           </div>
 
           <div class="case-block">
             <h3>Solution</h3>
-            <p>Replaced all 15–16 legacy tools with one calculation engine. Digitized the 150+ formulas into a versioned, auditable Rule Catalog that customers edit directly — no engineering ticket required to change a formula. Deliberately rules-based, not LLM-driven: pricing math is a known, finite decision space where determinism and auditability matter more than flexibility. The full 14-stage pipeline runs against 300+ variables per project, with every calculation traceable to the exact formula version that produced it.</p>
+            <p>Replaced 15–16 legacy tools with one calculation engine. Digitized the 150+ formulas into a versioned, auditable Rule Catalog that customers edit directly — no engineering ticket required to change a formula. Deliberately rules-based, not LLM-driven: pricing math is a known, finite decision space where determinism and auditability matter more than flexibility. The full 14-stage pipeline runs against 300+ variables per project, with every calculation traceable to the exact formula version that produced it.</p>
           </div>
 
           <div class="case-grid">
@@ -744,30 +744,30 @@
 
           <div class="case-block">
             <h3>Problem</h3>
-            <p>QA teams kept business procedures — compliance workflows, internal runbooks — as static PDFs and screen recordings. Every application change forced someone to re-read a 20–40 page procedure or re-watch a walkthrough, then hand-write and run a test script per step. Authoring lagged the document catalog by weeks and scaled with headcount, not document volume — a linear cost against exponential doc growth, with silent transcription errors baked into whatever a tired reviewer typed.</p>
+            <p>QA teams kept procedures — compliance workflows, internal runbooks — as static PDFs and screen recordings. Every app change meant re-reading a 20–40 page doc or re-watching a walkthrough, then hand-writing and running a test script per step. Authoring scaled with headcount, not document volume — linear cost against exponential doc growth, with transcription errors baked in from whichever reviewer was tired that day.</p>
           </div>
 
           <div class="case-block">
             <h3>Solution</h3>
-            <p>A batch pipeline that turns a procedure document into an executed pass/fail result — no manual test-writing step. PDFs, DOCX, and video transcripts are parsed and chunked; two-pass LLM extraction (cheap classifier, then full extractor) pulls discrete steps with dependency links intact; steps compile to Gherkin; a validation gate checks each step against its literal source span before anything executes; validated scenarios run against the live app via isolated Claude Computer Use sessions, each producing a pass/fail result plus a per-step screenshot trace. No result ships without a trace behind it.</p>
+            <p>A batch pipeline that turns a procedure document straight into an executed pass/fail result — no manual test-writing step. PDFs, DOCX, and video transcripts get parsed and chunked; two-pass LLM extraction — cheap classifier, then full extractor — pulls discrete steps with dependency links intact; steps compile to Gherkin; a validation gate checks each one against its literal source span before anything runs; validated scenarios execute against the live app in isolated Claude Computer Use (CU) sessions, each producing a pass/fail result plus a per-step screenshot trace. No result ships without a trace behind it.</p>
           </div>
 
           <div class="case-grid">
             <div class="case-col">
               <h3>Challenges</h3>
               <ul>
-                <li><strong>Noisy source material.</strong> OCR errors on scans and ASR errors on video blur step boundaries. Layout-aware parsing with a per-chunk confidence score — low-confidence chunks are flagged before extraction, not after.</li>
+                <li><strong>Noisy source material.</strong> OCR errors on scans and ASR errors on video blur step boundaries. Fixed with layout-aware parsing and a per-chunk confidence score — low-confidence chunks flagged before extraction, not after.</li>
                 <li><strong>Context loss across chunks.</strong> Steps reference earlier steps ("using the record created above"); naive per-chunk extraction drops that. A sliding context window carries prior-chunk state forward, with explicit step-dependency links instead of independent chunks.</li>
                 <li><strong>LLM hallucination in step extraction.</strong> The model can invent a plausible step absent from the source. Every extracted step is checked against the exact source span it claims to derive from — no matching span, no step.</li>
-                <li><strong>Execution flakiness.</strong> Same scenario, different runtime UI state (load timing, layout shift) reads as a false failure. Backoff-retried up to three attempts before classifying as real, with screenshot-diffing to separate a genuine regression from a timing flake.</li>
+                <li><strong>Execution flakiness.</strong> Same scenario, different runtime UI state (load timing, layout shift) reads as a false failure. Retried up to three times with backoff before classifying as real, with screenshot-diffing to separate a genuine regression from a timing flake.</li>
               </ul>
             </div>
             <div class="case-col">
               <h3>Trade-offs</h3>
               <ul>
-                <li><strong>Claude Computer Use over scripted automation (Selenium/Playwright).</strong> A scripted test breaks the moment a selector changes; CU drives the UI the way a human reads intent, without needing the selector to exist. Traded a faster, deterministic script for an agent that survives UI drift — at 5–10x the per-step cost and materially higher variance in run time.</li>
-                <li><strong>Validation gate tuned for precision over recall.</strong> A step phrased well but not matching its source span verbatim gets rejected, not accepted on "close enough." That caps automated coverage below 100% — the 19% left in the review queue is partly this trade-off's cost, not pure pipeline failure — accepted because a false positive here ships an untested step as tested.</li>
-                <li><strong>LLM extraction over rule-based parsing.</strong> Regex/rules are brittle across varied document formats and free-text video transcripts. Accepted probabilistic extraction and paid for it with the validation gate above, rather than forcing a rules engine onto open-ended natural language.</li>
+                <li><strong>CU over scripted automation (Selenium/Playwright).</strong> A scripted test breaks the moment a selector changes; CU drives the UI the way a human reads intent, with no selector required. Traded a faster, deterministic script for an agent that survives UI drift — at 5–10x the per-step cost and higher run-time variance.</li>
+                <li><strong>Validation gate tuned for precision over recall.</strong> A step phrased well but not matching its source span verbatim gets rejected, not waved through on "close enough." That caps automated coverage below 100% and accounts for part of the 19% left in the review queue — accepted because a false positive here would ship an untested step as tested.</li>
+                <li><strong>LLM extraction over rule-based parsing.</strong> Regex and rules are brittle across varied document formats and free-text video transcripts. Accepted probabilistic extraction and paid for it with the validation gate above, rather than forcing a rules engine onto open-ended natural language.</li>
                 <li><strong>Two-tier model routing over one model for everything.</strong> A cheap classification pass filters irrelevant content before the expensive extractor touches it — full-model-on-everything was simpler but meaningfully costlier at document-catalog scale.</li>
               </ul>
             </div>
@@ -778,8 +778,8 @@
               <h3>Failure Scenarios in Production</h3>
               <ul>
                 <li><strong>One shared step breaks, fifty scenarios fail at once.</strong> A login-button move or nav-bar change fails every scenario that depends on that shared setup step simultaneously — without dedup, one root cause floods the review queue as fifty unrelated-looking tickets.</li>
-                <li><strong>Document revised mid-queue.</strong> A doc gets updated while its scenario sits queued for execution — running the stale scenario produces a result that's technically accurate against text that no longer exists, and nobody notices until someone acts on it.</li>
-                <li><strong>Agent hits an interstitial the source never described.</strong> A consent banner or permission dialog the procedure doc doesn't mention can trap a Computer Use session in a retry loop against a state it has no instructions for, burning execution budget on a scenario that was never going to resolve itself.</li>
+                <li><strong>Document revised mid-queue.</strong> The doc changes while its scenario sits queued; the stale scenario still runs, returning a result that's accurate against text that no longer exists — nobody notices until someone acts on it.</li>
+                <li><strong>Agent hits an interstitial the source never described.</strong> A consent banner or permission dialog the procedure doc doesn't mention can trap a CU session in a retry loop against a state it has no instructions for, burning execution budget on a scenario that was never going to resolve.</li>
                 <li><strong>Session timeout mid-scenario.</strong> A 15-step scenario hits an auth timeout at step 12. A naive retry restarts from step one — discarding 11 confirmed-good steps and doubling cost for a failure that was never a real regression.</li>
               </ul>
             </div>
@@ -788,7 +788,7 @@
               <ul>
                 <li><strong>Failure clustering before human review.</strong> Trace similarity groups scenarios failing at the same step signature, so one broken shared step surfaces as one ticket with fifty affected scenarios attached, not fifty separate ones.</li>
                 <li><strong>Version-pinned scenarios.</strong> Each Gherkin scenario is generated against a content-hash of its source doc; execution checks that hash at run time and invalidates — rather than runs — a scenario whose source has since changed.</li>
-                <li><strong>Two-level circuit breakers.</strong> A session stuck outside any recognized UI state for N actions is killed and flagged, not retried indefinitely. A batch whose failure rate spikes past baseline halts its remaining queue and pages for review instead of burning budget on scenarios likely failing for the same root cause.</li>
+                <li><strong>Two-level circuit breakers.</strong> A session stuck outside any recognized UI state for N actions is killed and flagged, not retried indefinitely. A batch whose failure rate spikes past baseline halts its remaining queue and pages for review, instead of burning budget on scenarios likely failing for the same root cause.</li>
                 <li><strong>Checkpointed resume.</strong> Long scenarios persist state after each confirmed step; a session-timeout failure resumes from the last confirmed checkpoint post re-auth, instead of restarting from step one.</li>
               </ul>
             </div>
@@ -799,9 +799,9 @@
               <h3>Scaling &amp; Performance</h3>
               <ul>
                 <li><strong>Parallel document workers.</strong> Each doc or video processes independently in a worker pool — the catalog scales by adding workers, not redesigning the pipeline.</li>
-                <li><strong>Execution isolation, with pooling where it pays off.</strong> Each scenario defaults to its own Computer Use session to avoid UI-state collision; scenarios sharing expensive setup (same login, same base state) pool a warm session instead, trading strict isolation for throughput on that subset.</li>
+                <li><strong>Execution isolation, with pooling where it pays off.</strong> Each scenario defaults to its own CU session to avoid UI-state collision; scenarios sharing expensive setup (same login, same base state) pool a warm session instead, trading strict isolation for throughput on that subset.</li>
                 <li><strong>Chunk-level caching.</strong> Content-hash chunk caching skips re-extraction on document sections unchanged since the last run, with a periodic full re-run to catch the rare hash-boundary miss.</li>
-                <li><strong>Execution is the bottleneck, not generation.</strong> Live UI interaction is far slower than parsing or generation. Execution is queued and batched separately, so a slow execution backlog can't stall new document ingestion.</li>
+                <li><strong>Execution is the bottleneck, not generation.</strong> Live UI interaction is far slower than parsing or generation. Execution runs on a separate queue, batched on its own, so a slow execution backlog can't stall new document ingestion.</li>
               </ul>
             </div>
             <div class="case-col">
@@ -809,7 +809,7 @@
               <ul>
                 <li><strong>Per-stage structured logs.</strong> Doc ID, chunk ID, extraction confidence, validation verdict, and execution trace ID are logged at every stage — a failure traces to the exact input and stage that caused it, not just "test failed."</li>
                 <li><strong>Trace, not just a verdict.</strong> A screenshot and step trace is captured per executed step — the only reliable way to tell a real regression from a UI timing flake without re-running blind. Full-fidelity traces are retained for failures; passing runs are sampled to bound storage growth.</li>
-                <li><strong>Three-way failure classification.</strong> Parse failure, validation rejection (likely hallucination), and execution failure route to three different review queues, because the fix for each is different.</li>
+                <li><strong>Three-way failure classification.</strong> Parse failure, validation rejection (likely hallucination), and execution failure route to three different review queues, because each has a different fix.</li>
               </ul>
             </div>
           </div>
@@ -840,7 +840,7 @@
                 <h3 class="card-title">Procurement Optimization Platform</h3>
                 <span class="status-pill status-done">Handed off</span>
               </div>
-              <p class="card-desc">A POC evaluating four optimization solvers for procurement sourcing decisions, shipped as a hybrid method combining the strongest properties of each rather than picking a single winner outright. Outgrew "proof of concept" and was converted into a fully staffed follow-on project, alongside the document-to-test automation system above.</p>
+              <p class="card-desc">A POC evaluating four optimization solvers for procurement sourcing decisions, shipped as a hybrid method combining the strongest properties of each over picking a single winner outright. Outgrew "proof of concept" and converted into a fully staffed follow-on project, alongside the document-to-test automation system above.</p>
               <div class="card-metrics">
                 <span class="metric-chip">Solvers evaluated <b>4</b></span>
                 <span class="metric-chip">Method shipped <b>Hybrid</b></span>
@@ -1176,7 +1176,7 @@
           <div class="growth-grid">
             <div class="goal-card">
               <span class="goal-tag">1-Year Goal</span>
-              <p>Complete the Google Cloud Professional Machine Learning Engineer certification and apply the learnings to strengthen ML solution architecture and production deployment practices across active engagements — positioning for a transition from AI/ML Engineer to Senior AI/ML Engineer.</p>
+              <p>Complete the Google Cloud Professional Machine Learning Engineer certification and apply it to strengthen ML solution architecture and production deployment across active engagements — positioning for a move from AI/ML Engineer to Senior AI/ML Engineer.</p>
             </div>
             <div class="goal-card">
               <span class="goal-tag">3-Year Goal</span>
@@ -1291,7 +1291,7 @@
   <div class="footer-inner">
     <div class="footer-cta">
       <h2>Let's talk systems.</h2>
-      <p>Open to conversations about senior AI/ML engineering roles, forward-deployed engineering, or just talking shop about production LLM systems.</p>
+      <p>Open to conversations about senior AI/ML engineering roles, forward-deployed engineering, or talking shop about production LLM systems.</p>
     </div>
     <div class="contact-grid">
       <a class="btn btn-primary" href="mailto:pranav27singh@gmail.com">Email me →</a>

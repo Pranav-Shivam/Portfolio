@@ -203,6 +203,8 @@
     font-family:var(--mono); font-size:9.5px; fill:#8AA39D; letter-spacing:0.06em;
   }
   .pl-node-label{font-family:var(--mono); font-size:10px; fill:#D8E4E1;}
+  .lg-label{font-family:var(--mono); font-size:10.5px; fill:var(--ink-soft); letter-spacing:0.02em;}
+  .lg-node{font-family:var(--mono); font-size:11.5px; fill:var(--ink);}
   @media(prefers-reduced-motion:no-preference){
     .flow-dot{ animation: none; }
   }
@@ -781,6 +783,78 @@
             <span class="metric-chip">Required fields <b>5, hard-gated</b></span>
             <span class="metric-chip">Normalization safety net <b>strict array-length validation</b></span>
           </div>
+            </div>
+          </details>
+
+          <details class="disclosure">
+            <summary>Agentic orchestration — LangGraph state machine <span class="disc-hint">conditional edges · retry loops · human-review fallback</span></summary>
+            <div class="disclosure-body">
+
+          <div class="case-block">
+            <h3>Orchestration</h3>
+            <p>The four agents run as nodes in a LangGraph state machine instead of a fixed linear call chain — conditional edges route each RFQ to exactly the next step its own data requires: specs extract first, with incomplete ones looping back through the Missing Info Agent until the customer replies; dedupe runs after extraction, not before, since duplicates show up in the extracted spec data itself, not just the quote code; and only validated, high-confidence records reach structured output. Everything else falls through to human review rather than shipping an unverified quote.</p>
+          </div>
+
+          <div class="pipeline-wrap" style="margin:8px 0 28px;">
+            <svg viewBox="0 0 760 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="LangGraph state machine for the RFQ pipeline: Snowflake Sync Agent, Material Specification Agent, Missing Info Agent, Dedupe Agent, confidence gate, and terminal states">
+              <defs>
+                <marker id="lg-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="var(--ink-soft)"/>
+                </marker>
+              </defs>
+
+              <circle cx="380" cy="16" r="6" fill="var(--ink)"/>
+              <text x="380" y="2" text-anchor="middle" class="lg-label">START</text>
+
+              <line x1="380" y1="22" x2="380" y2="54" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#lg-arrow)"/>
+              <rect x="290" y="56" width="180" height="40" rx="7" fill="var(--surface)" stroke="var(--line)"/>
+              <text x="380" y="80" text-anchor="middle" class="lg-node">Snowflake Sync Agent</text>
+
+              <line x1="380" y1="96" x2="380" y2="128" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#lg-arrow)"/>
+              <rect x="290" y="130" width="180" height="40" rx="7" fill="var(--surface)" stroke="var(--line)"/>
+              <text x="380" y="154" text-anchor="middle" class="lg-node">Material Spec Agent</text>
+
+              <line x1="290" y1="150" x2="210" y2="150" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#lg-arrow)"/>
+              <text x="250" y="142" text-anchor="middle" class="lg-label">fields missing</text>
+              <rect x="30" y="130" width="180" height="40" rx="7" fill="var(--surface)" stroke="var(--line)"/>
+              <text x="120" y="154" text-anchor="middle" class="lg-node">Missing Info Agent</text>
+
+              <path d="M30,170 C-10,206 60,222 120,206 C160,196 190,182 230,170" fill="none" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#lg-arrow)"/>
+              <text x="120" y="224" text-anchor="middle" class="lg-label">customer replies</text>
+
+              <line x1="380" y1="170" x2="380" y2="202" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#lg-arrow)"/>
+              <text x="392" y="190" text-anchor="start" class="lg-label">complete</text>
+              <rect x="290" y="204" width="180" height="40" rx="7" fill="var(--surface)" stroke="var(--line)"/>
+              <text x="380" y="228" text-anchor="middle" class="lg-node">Dedupe Agent</text>
+
+              <line x1="470" y1="224" x2="610" y2="224" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#lg-arrow)"/>
+              <text x="540" y="216" text-anchor="middle" class="lg-label">duplicate</text>
+              <rect x="610" y="204" width="140" height="40" rx="7" fill="var(--surface)" stroke="var(--line)"/>
+              <text x="680" y="228" text-anchor="middle" class="lg-node">Flag Duplicate (END)</text>
+
+              <line x1="380" y1="244" x2="380" y2="276" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#lg-arrow)"/>
+              <text x="392" y="264" text-anchor="start" class="lg-label">unique</text>
+              <rect x="290" y="278" width="180" height="40" rx="7" fill="var(--surface)" stroke="var(--line)"/>
+              <text x="380" y="302" text-anchor="middle" class="lg-node">Confidence Gate</text>
+
+              <line x1="470" y1="298" x2="610" y2="298" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#lg-arrow)"/>
+              <text x="540" y="290" text-anchor="middle" class="lg-label">low confidence</text>
+              <rect x="610" y="278" width="140" height="40" rx="7" fill="var(--surface)" stroke="var(--line)"/>
+              <text x="680" y="302" text-anchor="middle" class="lg-node">Human Review (END)</text>
+
+              <line x1="380" y1="318" x2="380" y2="350" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#lg-arrow)"/>
+              <text x="392" y="338" text-anchor="start" class="lg-label">high confidence</text>
+              <rect x="290" y="352" width="180" height="40" rx="7" fill="var(--surface)" stroke="var(--line)"/>
+              <text x="380" y="376" text-anchor="middle" class="lg-node">Structured Output (END)</text>
+            </svg>
+          </div>
+
+          <div class="chip-list chip-list-spaced">
+            <span class="tech-chip">LangGraph</span>
+            <span class="tech-chip">Conditional edges</span>
+            <span class="tech-chip">Stateful retry / resume</span>
+          </div>
+
             </div>
           </details>
         </div>

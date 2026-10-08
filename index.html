@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pranav Shivam — AI/ML Engineer, Production LLM Systems</title>
-<meta name="description" content="Pranav Shivam — AI/ML Engineer who builds LLM systems that run in production, not demos. RFQ extraction pipelines, multi-tenant AI platforms, and enterprise automation at scale.">
+<title>Pranav Shivam — Software Developer II, AI/ML</title>
+<meta name="description" content="Pranav Shivam — Software Developer II (AI/ML) who builds LLM systems that run in production, not demos. RFQ extraction pipelines, multi-agent orchestration, and enterprise automation at scale.">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="favicon.svg">
@@ -495,7 +495,7 @@
     <div>
       <p class="eyebrow"><span class="dot"></span>Building production AI systems · Cognida.AI</p>
       <h1 class="name">Pranav Shivam</h1>
-      <p class="role">AI/ML Engineer — Production LLM Systems</p>
+      <p class="role">Software Developer II — AI/ML, Production LLM Systems</p>
       <p class="tagline">I design and ship LLM-driven backend systems — document parsing, ETL, and automation pipelines running in production, not prototypes. Outside client work, I run an independent lab — RAG pipelines, multi-agent systems, self-hosted tools — to pressure-test ideas before they reach production.</p>
       <div class="hero-ctas">
         <a class="btn btn-primary" href="#flagship">View flagship system →</a>
@@ -554,7 +554,7 @@
             </div>
             <div class="now-cell">
               <div class="now-k">Studying</div>
-              <div class="now-v">M.Tech in AI/ML at BITS Pilani (WILP) — on track to complete September 2027.</div>
+              <div class="now-v">M.Tech in AI/ML at BITS Pilani (WILP) — 2 semesters complete, on track for September 2027.</div>
             </div>
             <div class="now-cell">
               <div class="now-k">Next credential</div>
@@ -1233,28 +1233,43 @@
 
             <div class="card">
               <div class="card-top">
-                <h3 class="card-title">MindMap</h3>
-                <span class="status-pill status-live">Production-quality MVP</span>
+                <h3 class="card-title">ShiruVox</h3>
+                <span class="status-pill status-live">180 commits · active</span>
               </div>
-              <p class="card-desc">Page-scoped PDF study app with streaming AI Q&A and hybrid vector + text retrieval. Runtime-switchable across OpenAI, Claude, Gemini, and Ollama, with persistent per-page history, global search, and background jobs via Redis + RQ. Architecturally the most complete of my personal RAG apps.</p>
+              <p class="card-desc">Consolidated personal knowledge app — PDF/YouTube ingestion, chat, notes, voice — built on a real RAG evaluation harness: a 156-question benchmark scoring faithfulness, context precision, context recall, and answer relevancy, with a live dashboard (Overview / Compare / History / Drill-down). Used it to prove dropping HyDE halves latency (12.7s → 6.7s) with no measurable quality loss.</p>
               <div class="card-metrics">
-                <span class="metric-chip">Qdrant + Redis</span>
-                <span class="metric-chip">SSE streaming</span>
+                <span class="metric-chip">RAGAS-style eval harness</span>
+                <span class="metric-chip">156-question benchmark</span>
+                <span class="metric-chip">Latency -47% via HyDE removal</span>
               </div>
-              <a class="card-link" href="https://github.com/Pranav-Shivam/MindMap" target="_blank" rel="noopener">View repo →</a>
+              <a class="card-link" href="https://github.com/Pranav-Shivam/ShiruVox" target="_blank" rel="noopener">View repo →</a>
             </div>
 
             <div class="card">
               <div class="card-top">
-                <h3 class="card-title">Claude Code Skill Library</h3>
-                <span class="status-pill status-done">Personal standard</span>
+                <h3 class="card-title">Claude Fluency Toolkit</h3>
+                <span class="status-pill status-live">7 skills · public marketplace</span>
               </div>
-              <p class="card-desc">A library of Claude Code skills, subagents, and agentic coding standards. Includes a security-scan orchestrator that spawns 10 specialist subagents in parallel — auth, SAST, secrets, deps, IaC, crypto, RBAC — using real tools like trufflehog, semgrep, and checkov to produce a severity-scored, GO/NO-GO report.</p>
+              <p class="card-desc">Public Claude Code plugin marketplace — one plugin bundling 7 engineering-workflow skills: an 11-agent security audit fleet (auth, SAST, secrets, deps, IaC, crypto, RBAC, data exposure) producing a severity-graded report, plus PR review, timesheet automation, ADR/PPTX generation, and prompt engineering. Full docs, beginner install path, MIT-licensed.</p>
               <div class="card-metrics">
-                <span class="metric-chip">10 parallel subagents</span>
-                <span class="metric-chip">One-line installer</span>
+                <span class="metric-chip">11-agent security fleet</span>
+                <span class="metric-chip">8+ commands</span>
               </div>
-              <a class="card-link" href="https://github.com/Pranav-Shivam/CodingAgents" target="_blank" rel="noopener">View repo →</a>
+              <a class="card-link" href="https://github.com/Pranav-Shivam/claude-fluency-toolkit" target="_blank" rel="noopener">View repo →</a>
+            </div>
+
+            <div class="card">
+              <div class="card-top">
+                <h3 class="card-title">EstimateAnalysis</h3>
+                <span class="status-pill status-uat">POC · 176 commits</span>
+              </div>
+              <p class="card-desc">AI agent system turning unstructured B2B quote-request emails into priced estimates — a personal-lab rebuild of the RFQ problem space. LangGraph-orchestrated agent loop with procedural/semantic/episodic memory, a calibrated LLM-judge gate (Claude Haiku, Cohen's-kappa-scored), and a hybrid SQL + Neo4j graph + pgvector retrieval router. Langfuse wired in for full tracing.</p>
+              <div class="card-metrics">
+                <span class="metric-chip">LangGraph orchestration</span>
+                <span class="metric-chip">Langfuse tracing</span>
+                <span class="metric-chip">SQL + graph + vector router</span>
+              </div>
+              <a class="card-link" href="https://github.com/Pranav-Shivam/EstimateAnalysis" target="_blank" rel="noopener">View repo →</a>
             </div>
 
           </div>
@@ -1407,7 +1422,9 @@
               <div class="stack-group-title">AI Systems</div>
               <div class="chip-list">
                 <span class="tech-chip">RAG & Graph-RAG</span>
-                <span class="tech-chip">Multi-agent orchestration</span>
+                <span class="tech-chip">Multi-agent orchestration (LangGraph)</span>
+                <span class="tech-chip">LLM evaluation (RAGAS-style harness)</span>
+                <span class="tech-chip">LLM observability (Langfuse)</span>
                 <span class="tech-chip">Claude / OpenAI / Gemini / Ollama</span>
                 <span class="tech-chip">Claude Computer Use</span>
               </div>
@@ -1439,7 +1456,7 @@
             <div class="tl-item">
               <div class="tl-date">Dec 2025 — Present</div>
               <div>
-                <div class="tl-role">Forward Deployed Engineer, Enterprise Client Engagement — Cognida.AI</div>
+                <div class="tl-role">Software Developer II (AI/ML), Enterprise Client Engagement — Cognida.AI</div>
                 <div class="tl-desc">Running two concurrent production AI platforms as senior developer, while owning client requirement gathering, architecture sign-off, Azure DevOps project management, and junior developer mentoring.</div>
               </div>
             </div>
@@ -1451,9 +1468,9 @@
               </div>
             </div>
             <div class="tl-item">
-              <div class="tl-date">Jul 2023 — Dec 2025</div>
+              <div class="tl-date">Jul 2023 — Nov 2025</div>
               <div>
-                <div class="tl-role">Public-Sector SaaS UI Migration — Cognida.AI</div>
+                <div class="tl-role">Software Developer I (AI/ML), Public-Sector SaaS UI Migration — Cognida.AI</div>
                 <div class="tl-desc">Delivered the highest ticket and story-point volume on the team, migrating and automating workflows in a regulated public-sector product. Ranked the #1 contributor on the engagement, and top 3 across every team delivering on the platform.</div>
               </div>
             </div>
@@ -1470,16 +1487,16 @@
         <div class="stage-content reveal">
           <span class="stage-tag">Stage 08 — Scale</span>
           <h2 class="stage-title">Where this is headed</h2>
-          <p class="stage-sub">Currently pursuing an M.Tech in AI/ML (BITS Pilani, WILP, expected Sept 2027) alongside 12 completed learning programs spanning deep learning, LLM evaluation, and applied AI strategy.</p>
+          <p class="stage-sub">2 semesters into an M.Tech in AI/ML (BITS Pilani, WILP, expected Sept 2027), alongside 12 completed learning programs spanning deep learning, LLM evaluation, and applied AI strategy.</p>
 
           <div class="growth-grid">
             <div class="goal-card">
               <span class="goal-tag">1-Year Goal</span>
-              <p>Complete the Google Cloud Professional Machine Learning Engineer certification and apply it to strengthen ML solution architecture and production deployment across active engagements — positioning for a move from AI/ML Engineer to Senior AI/ML Engineer.</p>
+              <p>Complete the Google Cloud Professional Machine Learning Engineer certification, and deepen eval and agentic-orchestration engineering — RAGAS-style evaluation harnesses, LangGraph state machines — across both client and lab systems.</p>
             </div>
             <div class="goal-card">
               <span class="goal-tag">3-Year Goal</span>
-              <p>Progress into a Senior AI/ML Engineering role, backed by M.Tech completion, a portfolio of production AI and LLM systems delivered end to end, and demonstrated ownership of solution architecture at scale.</p>
+              <p>Own AI platform architecture end to end at a product company — not just shipping agents, but setting the retrieval, evaluation, and observability standards a team builds on. Backed by M.Tech completion and a growing bench of production LLM systems across orchestration, retrieval, and evals.</p>
             </div>
           </div>
           <p class="cert-note">// completed: Deep Learning for Computer Vision · Evaluating LLMs in Production · Strategy Workshop · +9 more</p>
@@ -1498,6 +1515,14 @@
           <p class="stage-sub">Long-form writing on <a href="https://medium.com/@pranavsinghtomar" target="_blank" rel="noopener" class="inline-link">Medium</a> — home lab tooling, AI systems, and the lessons that only show up once something's in production.</p>
 
           <div class="tl">
+            <div class="tl-item">
+              <div class="tl-date">Sep 27</div>
+              <div>
+                <div class="tl-role">Ravi Sent the Same Email to Three Suppliers. The One With a Knowledge Graph Won.</div>
+                <div class="tl-desc">How agent engineering, eval engineering, and a knowledge graph turn a free-text quote email into a correct, priced estimate faster than a skilled human rep — and what a system like that is worth over a year.</div>
+                <a class="write-link" href="https://medium.com/@pranavsinghtomar/the-12-minute-quote-how-agents-evals-and-a-knowledge-graph-beat-a-distributors-best-rep-133f8ff73bea" target="_blank" rel="noopener">Read on Medium →</a>
+              </div>
+            </div>
             <div class="tl-item">
               <div class="tl-date">Jul 23</div>
               <div>
@@ -1522,6 +1547,12 @@
                 <a class="write-link" href="https://medium.com/@pranavsinghtomar/ai-agent-has-amnesia-it-bills-you-for-the-privilege-652041b55437" target="_blank" rel="noopener">Read on Medium →</a>
               </div>
             </div>
+          </div>
+
+          <details class="disclosure" style="margin-top:20px;">
+            <summary>7 more posts <span class="disc-hint">May 23 → Mar 15</span></summary>
+            <div class="disclosure-body">
+              <div class="tl">
             <div class="tl-item">
               <div class="tl-date">May 23</div>
               <div>
@@ -1530,12 +1561,6 @@
                 <a class="write-link" href="https://medium.com/@pranavsinghtomar/the-app-that-puts-a-million-gamers-in-the-same-room-every-night-without-crashing-08acf8233e93" target="_blank" rel="noopener">Read on Medium →</a>
               </div>
             </div>
-          </div>
-
-          <details class="disclosure" style="margin-top:20px;">
-            <summary>6 more posts <span class="disc-hint">May 17 → Mar 15</span></summary>
-            <div class="disclosure-body">
-              <div class="tl">
             <div class="tl-item">
               <div class="tl-date">May 17</div>
               <div>
@@ -1598,7 +1623,7 @@
   <div class="footer-inner">
     <div class="footer-cta">
       <h2>Let's talk systems.</h2>
-      <p>Open to conversations about senior AI/ML engineering roles, forward-deployed engineering, or talking shop about production LLM systems.</p>
+      <p>Open to conversations about AI/ML and Applied AI engineering roles, or talking shop about production LLM systems.</p>
     </div>
     <div class="contact-grid">
       <a class="btn btn-primary" href="mailto:pranav27singh@gmail.com">Email me →</a>
